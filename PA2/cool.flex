@@ -51,6 +51,9 @@ extern YYSTYPE cool_yylval;
 
 DARROW          =>
 
+#define CLASS 258
+
+
 %%
 
  /*
