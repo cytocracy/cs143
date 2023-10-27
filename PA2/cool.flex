@@ -34,6 +34,8 @@ extern FILE *fin; /* we read from this file */
 char string_buf[MAX_STR_CONST]; /* to assemble string constants */
 char *string_buf_ptr;
 
+static int comment_lines = 0;
+
 extern int curr_lineno;
 extern int verbose_flag;
 
@@ -46,12 +48,16 @@ extern YYSTYPE cool_yylval;
 %}
 
 /*
- * Define names for regular expressions here. test commit 2
+ * Define names for regular expressions here.
  */
 
 DARROW          =>
+DIGIT           [0-9]
+%Start          COMMENT
+%Start          COMMENTS
+%Start          STRING
 
-#define CLASS 258
+
 
 
 %%
