@@ -12,6 +12,7 @@
 #define YY_NO_UNPUT   /* keep g++ happy */
 
 extern FILE *fin; /* we read from this file */
+// extern "C" int yylex(); /* remove */
 
 #undef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
@@ -28,8 +29,15 @@ extern int verbose_flag;
 
 extern YYSTYPE cool_yylval;
 
+bool check_strlen();
+int strlen_err();
+
+
+
+
 %}
 /*definitions*/
+%option noyywrap
 
 %x              COMMENT
 %x              STRING
@@ -76,7 +84,7 @@ OBJECTID [a-z]({DIGIT}|{LETTER})*
   return ERROR;
 }
 <COMMENT>\n {
-  curr_lineno++
+  curr_lineno++;
 }
 <COMMENT>. {
   /* pass, nothing to do in comment*/
@@ -89,8 +97,8 @@ OBJECTID [a-z]({DIGIT}|{LETTER})*
 }
 
 \" {
-  BEGIN(STRING)
-  str_buf_ptr = str_buf;
+  BEGIN(STRING);
+  string_buf_ptr = string_buf;
 }
 <STRING>\" {
   BEGIN(INITIAL);
@@ -113,27 +121,27 @@ OBJECTID [a-z]({DIGIT}|{LETTER})*
   return ERROR;
 }
 <STRING>\\[^ntbf] {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = yytext[1];
 }
 <STRING>\\[n] {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = '\n';
 }
 <STRING>\\[t] {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = '\t';
 }
 <STRING>\\[b] {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = '\b';
 }
 <STRING>\\[f] {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = '\f';
 }
 <STRING>. {
-  if (check_strlen()) return strlen_err()
+  if (check_strlen()) return strlen_err();
   *string_buf_ptr++ = *yytext;
 }
 
@@ -206,7 +214,7 @@ OBJECTID [a-z]({DIGIT}|{LETTER})*
 %% /* user subroutines*/
 
 bool check_strlen() {
-  return string_buf_ptr - str_buf + 1 > MAX_STR_CONST;
+  return string_buf_ptr - string_buf + 1 > MAX_STR_CONST;
 }
 
 int strlen_err() {
