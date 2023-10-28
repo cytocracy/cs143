@@ -1,13 +1,4 @@
-/*
- *  The scanner definition for COOL.
- */
-
-/*
- *  Stuff enclosed in %{ %} in the first section is copied verbatim to the
- *  output, so headers and global definitions are placed here to be visible
- * to the code in the file.  Don't remove anything that was here initially
- */
-%{
+%{ /*declarations*/
 #include <cool-parse.h>
 #include <stringtab.h>
 #include <utilities.h>
@@ -22,10 +13,6 @@
 
 extern FILE *fin; /* we read from this file */
 
-/* define YY_INPUT so we read from the FILE fin:
- * This change makes it possible to use this scanner in
- * the Cool compiler.
- */
 #undef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
 	if ( (result = fread( (char*)buf, sizeof(char), max_size, fin)) < 0) \
@@ -41,49 +28,189 @@ extern int verbose_flag;
 
 extern YYSTYPE cool_yylval;
 
-/*
- *  Add Your own definitions here
- */
-
 %}
-
-/*
- * Define names for regular expressions here.
- */
-
-DARROW          =>
-DIGIT           [0-9]
+/*definitions*/
 
 %x              COMMENT
 %x              STRING
 
+DIGIT           [0-9]
+INT             {DIGIT}+
+NEWLINE         (\r\n|\n)+
+LETTER          [a-zA-z]
+WHITESPACE      [ \t]*
+INLINECOMMENT   --.*\n
 
+CLASS           (?i:class)
+ELSE            (?i:else)
+IF              (?i:if)
+FI              (?i:fi)
+IN              (?i:in)
+INHERITS        (?i:inherits)
+LET             (?i:let)
+LOOP            (?i:loop)
+POOL            (?i:pool)
+THEN            (?i:then)
+WHILE           (?i:while)
+CASE            (?i:case)
+NEW             (?i:new)
+ISVOID          (?i:isviod)
+OF              (?i:of)
+NOT             (?i:not)
 
+TYPEID [A-Z]({DIGIT}|{LETTER})*
+OBJECTID [a-z]({DIGIT}|{LETTER})*
 
-%%
+%% /*rules*/
 
- /*
-  *  Nested comments
-  */
+"(*" {
+  BEGIN(COMMENT);
+}
+"*)" {
+  cool_yylval.error_msg = "Unmatched *)";
+  return ERROR;
+}
+<COMMENT><<EOF>> {
+  BEGIN(INITIAL);
+  cool_yylval.error_msg = "EOF in comment";
+  return ERROR;
+}
+<COMMENT>\n {
+  curr_lineno++
+}
+<COMMENT>. {
+  /* pass, nothing to do in comment*/
+}
+<COMMENT>"*)" {
+  BEGIN(INITIAL);
+}
+{INLINECOMMENT} {
+  curr_lineno++;
+}
 
+\" {
+  BEGIN(STRING)
+  str_buf_ptr = str_buf;
+}
+<STRING>\" {
+  BEGIN(INITIAL);
+  if (check_strlen()) return strlen_err();
+  string_buf_ptr = 0;
+  cool_yylval.symbol = stringtable.add_string(string_buf);
+  return STR_CONST;
+}
+<STRING><<EOF>> {
+  cool_yylval.error_msg="EOF in string constant";
+  return ERROR;
+}
+<STRING>\\\n {
+  curr_lineno++;
+}
+<STRING>\n {
+  curr_lineno++;
+  BEGIN(INITIAL);
+  cool_yylval.error_msg = "Unterminated string constant";
+  return ERROR;
+}
+<STRING>\\[^ntbf] {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = yytext[1];
+}
+<STRING>\\[n] {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = '\n';
+}
+<STRING>\\[t] {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = '\t';
+}
+<STRING>\\[b] {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = '\b';
+}
+<STRING>\\[f] {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = '\f';
+}
+<STRING>. {
+  if (check_strlen()) return strlen_err()
+  *string_buf_ptr++ = *yytext;
+}
 
- /*
-  *  The multiple-character operators.
-  */
-{DARROW}		{ return (DARROW); }
+{INT} {
+  cool_yylval.symbol = inttable.add_string(yytext);
+  return INT_CONST;
+}
+"false" {
+  cool_yylval.boolean = false;
+  return BOOL_CONST;
+}
+"true" {
+  cool_yylval.boolean = true;
+  return BOOL_CONST;
+}
 
- /*
-  * Keywords are case-insensitive except for the values true and false,
-  * which must begin with a lower-case letter.
-  */
+"=>"        { return DARROW; }
+"=<"        { return LE; }
+"<-"        { return ASSIGN; }
+"<"         { return '<'; }
+"@"         { return '@'; }
+"~"         { return '~'; }
+"="         { return '='; }
+"."         { return '.'; }
+"-"         { return '-'; }
+","         { return ','; }
+"+"         { return '+'; }
+"*"         { return '*'; }
+"/"         { return '/'; }
+"}"         { return '}'; }
+"{"         { return '{'; }
+"("         { return '('; }
+")"         { return ')'; }
+":"         { return ':'; }
+";"         { return ';'; }
+{CLASS}     { return CLASS; }
+{ELSE}      { return ELSE; }
+{FI}        { return FI; }
+{IF}        { return IF; }
+{IN}        { return IN; }
+{INHERITS}  { return INHERITS; }    
+{LET}       { return LET; } 
+{LOOP}      { return LOOP; }    
+{POOL}      { return POOL; }
+{THEN}      { return THEN; }
+{WHILE}     { return WHILE; }
+{CASE}      { return CASE; }
+{NEW}       { return NEW; }
+{OF}        { return OF; }
+{NOT}       { return NOT; }
 
+{OBJECTID} {
+  cool_yylval.symbol = idtable.add_string(yytext);
+  return OBJECTID;
+}
+{TYPEID} {
+  cool_yylval.symbol = idtable.add_string(yytext);
+  return TYPEID;
+}
+\n { curr_lineno++; }
+{WHITESPACE} {
+  /* pass */
+}
+. {
+  /*error*/
+  cool_yylval.error_msg = strdup(yytext);
+  return ERROR;
+}
 
- /*
-  *  String constants (C syntax)
-  *  Escape sequence \c is accepted for all characters c. Except for 
-  *  \n \t \b \f, the result is c.
-  *
-  */
+%% /* user subroutines*/
 
+bool check_strlen() {
+  return string_buf_ptr - str_buf + 1 > MAX_STR_CONST;
+}
 
-%%
+int strlen_err() {
+  BEGIN(INITIAL);
+  cool_yylval.error_msg = "String exceeds maximum size";
+  return ERROR;
+}
