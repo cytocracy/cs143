@@ -53,9 +53,9 @@ extern YYSTYPE cool_yylval;
 
 DARROW          =>
 DIGIT           [0-9]
-%Start          COMMENT
-%Start          COMMENTS
-%Start          STRING
+
+%x              COMMENT
+%x              STRING
 
 
 
