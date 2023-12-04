@@ -133,42 +133,74 @@
     %type <program> program
     %type <classes> class_list
     %type <class_> class
-    
-    /* You will want to change the following line. */
-    %type <features> dummy_feature_list
+    %type <features> features_list
+    /*%type <features> features*/
+    %type <feature> feature
+    %type <formals> formals
+    %type <formal> formal
+    %type <cases> case_branch_list
+    %type <case_> case_branch
+    %type <expressions> one_plus_expr
+    %type <expressions> param_expr
+    %type <expression> expr
+    %type <expression> let_expr
     
     /* Precedence declarations go here. */
+    %right ASSIGN
+    %left NOT
+    %nonassoc LE '<' '='
+    %left '+' '-'
+    %left '*' '/'
+    %left ISVOID
+    %left '~'
+    %left '@'
+    %left '.'
     
     
     %%
     /* 
     Save the root of the abstract syntax tree in a global variable.
     */
-    program	: class_list	{ @$ = @1; ast_root = program($1); }
-    ;
+    program	: class_list	{ 
+              @$ = @1; ast_root = program($1); }
+            ;
     
-    class_list
-    : class			/* single class */
-    { $$ = single_Classes($1);
-    parse_results = $$; }
-    | class_list class	/* several classes */
-    { $$ = append_Classes($1,single_Classes($2)); 
-    parse_results = $$; }
-    ;
+    class_list : class  { 
+                  $$ = single_Classes($1);
+                  parse_results = $$; }
+                | class_list class	/* several classes */{ 
+                  $$ = append_Classes($1,single_Classes($2)); 
+                  parse_results = $$; }
+                ;
     
     /* If no parent is specified, the class inherits from the Object class. */
-    class	: CLASS TYPEID '{' dummy_feature_list '}' ';'
-    { $$ = class_($2,idtable.add_string("Object"),$4,
-    stringtable.add_string(curr_filename)); }
-    | CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list '}' ';'
-    { $$ = class_($2,$4,$6,stringtable.add_string(curr_filename)); }
-    ;
+    class	: CLASS TYPEID '{' features_list '}' ';'{ 
+              $$ = class_($2,idtable.add_string("Object"), $4, stringtable.add_string(curr_filename)); }
+
+            | CLASS TYPEID INHERITS TYPEID '{' features_list '}' ';' { 
+              $$ = class_($2,$4,$6,stringtable.add_string(curr_filename)); }
+            /*error options*/
+            | CLASS TYPEID '{' error '}' ';' {
+              yyclearin;
+              $$ = NULL; }
+            | CLASS error '{' feature_list '}' ';' {
+              yyclearin; $$ = NULL; }
+            | CLASS error '{' error '}' ';' {
+              yyclearin; $$ = NULL; }
+            ;
     
     /* Feature list may be empty, but no empty features in list. */
-    dummy_feature_list:		/* empty */
-    {  $$ = nil_Features(); }
+    features_list : feature ';'
+                        { $$ = $1; }
+                    | error ';'
+                        { $$ = nil_Features(); }
+                    | feature_list feature ';'
+                        { $$ = append_Features($1, singleFeatures($2)); }
+                    | feature_list error ';'
+                        { $$ = append_Features($1, nil_Features()); }
+                    ;
     
-    
+    feature : OBJECTID 
     /* end of grammar */
     %%
     
