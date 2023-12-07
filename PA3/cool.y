@@ -15,7 +15,7 @@ extern char *curr_filename;
 /* Locations */
 #define YYLTYPE int              /* the type of locations */
 #define cool_yylloc curr_lineno  /* use the curr_lineno from the lexer
-for the location of tokens */
+// for the location of tokens */
   
 extern int node_lineno;          /* set before constructing a tree node
 to whatever you want the line number
@@ -334,10 +334,9 @@ expr	: OBJECTID ASSIGN expr
 /* This function is called automatically when Bison detects a parse error. */
 void yyerror(char *s)
 {
-  extern int curr_lineno;
+  /* extern int curr_lineno; */
   
-  cerr << "\"" << curr_filename << "\", line " << curr_lineno << ": " \
-  << s << " at or near ";
+  cerr << "\"" << curr_filename << "\", line " << curr_lineno << ": " << s << " at or near ";
   print_cool_token(yychar);
   cerr << endl;
   omerrs++;
