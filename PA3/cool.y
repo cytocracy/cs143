@@ -334,7 +334,7 @@ expr	: OBJECTID ASSIGN expr
 /* This function is called automatically when Bison detects a parse error. */
 void yyerror(char *s)
 {
-  /* extern int curr_lineno; */
+  extern int curr_lineno;
   
   cerr << "\"" << curr_filename << "\", line " << curr_lineno << ": " << s << " at or near ";
   print_cool_token(yychar);
