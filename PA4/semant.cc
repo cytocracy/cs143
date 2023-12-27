@@ -6,6 +6,13 @@
 #include "semant.h"
 #include "utilities.h"
 
+#include <numeric>
+#include <functional>
+#include <algorithm>
+#include <unordered_set>
+#include <vector>
+
+using namespace std;
 
 extern int semant_debug;
 extern char *curr_filename;
@@ -56,7 +63,7 @@ static void initialize_constants(void)
     Bool        = idtable.add_string("Bool");
     concat      = idtable.add_string("concat");
     cool_abort  = idtable.add_string("abort");
-    copy        = idtable.add_string("copy");
+    ::copy        = idtable.add_string("copy");
     Int         = idtable.add_string("Int");
     in_int      = idtable.add_string("in_int");
     in_string   = idtable.add_string("in_string");
@@ -115,7 +122,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
     for (auto cls: *classes){
         auto class_name = cls->get_name();
-        auto parents = cls->get_parent();
+        auto parent = cls->get_parent();
 
         if (class_name == SELF_TYPE || classes_.find(class_name) != classes_.end()) {
             semant_error(cls) << class_name << "redeclared" << endl;
@@ -124,7 +131,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
         auto it = invalid_parents.find(parent);
         if (it != invalid_parents.end()) {
-            semant_errro(cls) << "Class " << cls->get_name() << " cannot inherit from " << *it << "\n";
+            semant_error(cls) << "Class " << cls->get_name() << " cannot inherit from " << *it << "\n";
             return;
         }
 
@@ -135,7 +142,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
     for (auto cls: *classes){
         auto parent = cls->get_parent();
         auto class_name = cls->get_name();
-        if (parent != No_class && clsses_.find(parent) == classes_.end()) {
+        if (parent != No_class && classes_.find(parent) == classes_.end()) {
             semant_error(cls) << "Class " << class_name << " inherits from non existent class " << parent << endl;
             return;
         }
@@ -214,9 +221,9 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
 //confirm derived is a subclass of ancestor
 bool ClassTable::leq(Symbol derived, Symbol ancestor) {
-    ancestor = get_class(acnestor)->get_name();
+    ancestor = get_class(ancestor)->get_name();
     derived = get_class(derived)->get_name();
-    while (*derived != *No-class) {
+    while (*derived != *No_class) {
         if (*derived == *ancestor) {
             return true;
         }
@@ -264,7 +271,7 @@ bool ClassTable::has_cycle(Class_ cls) {
 }
 
 Symbol ClassTable::find_common_ancestor(Symbol a, Symbol b) {
-    auto ca = get_clas(a);
+    auto ca = get_class(a);
     if (ca == nullptr) {
         return nullptr;
     }
@@ -325,9 +332,9 @@ void ClassTable::install_basic_classes() {
                     append_Features(
                             single_Features(method(cool_abort, nil_Formals(), Object, no_expr())),
                             single_Features(method(type_name, nil_Formals(), Str, no_expr()))),
-                    single_Features(method(copy, nil_Formals(), SELF_TYPE, no_expr()))),
+                    single_Features(method(::copy, nil_Formals(), SELF_TYPE, no_expr()))),
             filename);
-        classes_[object] = Object_class;
+        classes_[Object] = Object_class;
 
     // 
     // The IO class inherits from Object. Its methods are
@@ -468,14 +475,14 @@ void method_class::add(ClassTable *p) {
     auto &symtab = p->methods.find(cls->get_name())->second;
 
     if (symtab.probe(name)) {
-        p->semant_error(clc) << "Method redefinition: " << name << "\n";
+        p->semant_error(cls) << "Method redefinition: " << name << "\n";
         return;
     }
 
     symtab.addid(name, this);
 }
 
-void attr_class:add(ClassTable *p) {
+void attr_class::add(ClassTable *p) {
     auto cls = p->get_class();
 
     if (*name == *self) {
@@ -553,12 +560,418 @@ void method_class::type_check(ClassTable *p) {
         if (*return_type == *SELF_TYPE && *return_type != *rettype) {
             p->semant_error(p->get_class()) << "Inferred return type " << rettype << " of method " << name << " does not conform to declared return type " << return_type << "\n";
         } else if (!p->leq(rettype, return_type)) {
-            p->semant_error(p->get_class()) << "Inferred return type " << rettype << " of method " << name MM " does not conform to declared return type " << return_type << "\n";
+            p->semant_error(p->get_class()) << "Inferred return type " << rettype << " of method " << name << " does not conform to declared return type " << return_type << "\n";
         }
     }
     symtab.exitscope();
 }
 
 //next is attr_class::type_check
+void attr_class::type_check(ClassTable *p) {
+    if (p->get_class(type_decl) == nullptr) {
+        return;
+    }
+
+    init->type_check(p);
+}
+
+Symbol assign_class::type_check(ClassTable *p) {
+    auto type = p->lookup(p->attrs, p->get_class()->get_name(), name);
+    if (type == nullptr){
+        p->semant_error(p->get_class()) << "Variable " << name << " is not defined\n";
+        return nullptr;
+    }
+
+    auto expr_type = expr->type_check(p);
+    if (!expr_type) return nullptr;
 
 
+    if (!p->leq(expr_type, type)) {
+        p->semant_error(p->get_class()) << "Invalid expression assignment: " << type << " = " << expr_type << "\n";
+        return nullptr;
+    }
+
+    set_type(type);
+    return type;
+}
+
+Symbol static_dispatch_class::type_check(ClassTable *p){
+    auto method = p->lookup(p->methods, type_name, name);
+    if (method == nullptr) {
+        p->semant_error(p->get_class()) << "Method " << name << " not found\n";
+        return nullptr;
+    }
+
+    auto t0 = expr->type_check(p);
+    if (t0 == nullptr) return nullptr;
+
+    if (!p->leq(t0, type_name)) {
+        p->semant_error(p->get_class()) << "Incompatible types between the call expression and " << type_name << "\n";
+        return nullptr;
+    }
+
+    if (actual->len() != method->formals->len()) {
+        p->semant_error(p->get_class()) << "Arguments number mismatch\n";
+        return nullptr;
+    }
+
+    auto enda = end(*actual);
+    auto it = mismatch(begin(*actual), enda, begin(*method->formals), [=](Expression expr, Formal formal) -> bool {
+        auto type = expr->type_check(p);
+        if(type == nullptr) return false;
+
+        auto f = reinterpret_cast<formal_class*>(formal);
+
+        if (!p->leq(type, f->type_decl)) {
+            p->semant_error(p->get_class()) << "invalid argumebnt type for " << f->name << " in method call\n";
+            return false;
+        }
+
+        return true;
+    });
+
+    if (it.first != enda) {
+        return nullptr;
+    }
+
+    Symbol ret;
+    if (*method->return_type == *SELF_TYPE) {
+        ret = t0;
+    } else {
+        ret = method->return_type;
+    }
+    set_type(ret);
+    return ret;
+}
+
+Symbol dispatch_class::type_check(ClassTable *p) {
+    auto t0 = expr->type_check(p);
+    if (t0 == nullptr) {
+        return nullptr;
+    }
+
+    auto t0p = *t0 == *SELF_TYPE ? p->get_class()->get_name() : t0;
+    auto method = p->lookup(p->methods, t0p, name);
+    if (method == nullptr) {
+        p->semant_error(p->get_class()) << "Method " << name << " not found\n";
+        return nullptr;
+    }
+
+    auto enda = end(*actual);
+    auto it = mismatch(begin(*actual), enda, begin(*method->formals), [=](Expression expr, Formal formal) -> bool {
+        auto typ = expr->type_check(p);
+        if (typ == nullptr) {
+            return false;
+        }
+
+        auto f = reinterpret_cast<formal_class *>(formal);
+
+        if (!p->leq(typ, f->type_decl)) {
+            p->semant_error(p->get_class()) << "Invalid argument type for " << f->name << " in method call\n";
+            return false;
+        }
+
+        return true;
+    });
+
+    Symbol ret;
+    if (*method->return_type == *SELF_TYPE) {
+        ret = t0;
+    } else {
+        ret = method->return_type;
+    }
+    set_type(ret);
+    return ret;
+}
+
+Symbol cond_class::type_check(ClassTable *p) {
+    auto pred_type = pred->type_check(p);
+    if (pred_type == nullptr) {
+        return nullptr;
+    }
+
+    if (*pred_type != *Bool) {
+        p->semant_error(p->get_class()) << "Expression is not boolean\n";
+        return nullptr;
+    }
+
+    auto then_type = then_exp->type_check(p);
+    if (then_type == nullptr) return nullptr;
+
+    auto else_type = else_exp->type_check(p);
+    if (else_type == nullptr) {
+        return else_type;
+    }
+
+    auto ret = p->find_common_ancestor(then_type, else_type);
+    set_type(ret);
+    return ret;
+}
+
+Symbol branch_class::type_check(ClassTable *p) {
+    if (p->get_class(type_decl) == nullptr) return nullptr;
+    return expr->type_check(p);
+}
+
+Symbol loop_class::type_check(ClassTable *p) {
+    auto pred_type = pred->type_check(p);
+    if (pred_type == nullptr) {
+        return nullptr;
+    }
+    if (*pred_type != *Bool) {
+        p->semant_error(p->get_class()) << "Expression must be boolean\n";
+        return nullptr;
+    }
+    if (body->type_check(p) == nullptr) {
+        return nullptr;
+    }
+    set_type(Object);
+    return get_type();
+}
+
+Symbol typcase_class::type_check(ClassTable *p) {
+    auto expr_type = expr->type_check(p);
+    if (expr_type == nullptr) return nullptr;
+
+    unordered_set<Symbol> s, s2;
+    auto &symtab = p->attrs.find(p->get_class()->get_name())->second;
+
+    for (auto _case: *cases) {
+        auto branch = reinterpret_cast<branch_class*>(_case);
+        symtab.enterscope();
+        symtab.addid(branch->name, branch->type_decl);
+        auto branch_type = branch->type_check(p);
+        symtab.exitscope();
+        if (branch_type == nullptr) return nullptr;
+
+        if (!s.insert(branch->type_decl).second) {
+            p->semant_error(p->get_class()) << "Duplicated case " << branch->type_decl << "\n";
+            return nullptr;
+        }
+        s2.insert(branch_type);
+    }
+
+    using namespace std::placeholders;
+    set_type(accumulate(begin(s2), end(s2), *begin(s2), bind(&ClassTable::find_common_ancestor, p, _1, _2)));
+    return get_type();
+}
+
+Symbol block_class::type_check(ClassTable *p) {
+    Symbol ret = nullptr;
+    for (auto expr: *body) {
+        ret = expr->type_check(p);
+        if(ret == nullptr) return nullptr;
+    }
+    set_type(ret);
+    return ret;
+}
+
+Symbol let_class::type_check(ClassTable *p) {
+    if (*identifier == *self) {
+        p->semant_error(p->get_class()) << "Identifier can't be named self\n";
+        return nullptr;
+    }
+    auto t0p = *type_decl == *SELF_TYPE ? p->get_class()->get_name() : type_decl;
+    if (p->get_class(t0p) == nullptr) return nullptr;
+
+    auto t1 = init->type_check(p);
+    if (*t1 != *No_type && !p->leq(t1, t0p)) {
+        p->semant_error(p->get_class()) << "Incompatible types: " << t1 << " and " << t0p << "\n";
+        return nullptr;
+    }
+
+    auto &symtab = p->attrs.find(p->get_class()->get_name())->second;
+    symtab.enterscope();
+    symtab.addid(identifier, type_decl);
+    auto ret = body->type_check(p);
+    if (ret == nullptr) return nullptr;
+    symtab.exitscope();
+    set_type(ret);
+    return get_type();
+}
+
+static Symbol bin_expr_check(ClassTable *p, Expression e1, Expression e2, Symbol type = nullptr)
+{
+    auto t1 = e1->type_check(p);
+    if (t1 == nullptr)
+        return nullptr;
+    if (type != nullptr && *t1 != *type)
+    {
+        p->semant_error(p->get_class()) << "Expression 1 is not " << type << "\n";
+        return nullptr;
+    }
+    auto t2 = e2->type_check(p);
+    if (t2 == nullptr)
+        return nullptr;
+    if (type != nullptr && *t2 != *type)
+    {
+        p->semant_error(p->get_class()) << "Expression 2 is not Int " << type << "\n";
+        return nullptr;
+    }
+
+    if (type == nullptr && *t1 != *t2)
+    {
+        p->semant_error(p->get_class()) << "Incompatible expressions\n";
+        return nullptr;
+    }
+
+    return t1;
+}
+
+Symbol plus_class::type_check(ClassTable *p)
+{
+    set_type(bin_expr_check(p, e1, e2, Int));
+    return get_type();
+}
+
+Symbol sub_class::type_check(ClassTable *p)
+{
+    set_type(bin_expr_check(p, e1, e2, Int));
+    return get_type();
+}
+
+Symbol mul_class::type_check(ClassTable *p)
+{
+    set_type(bin_expr_check(p, e1, e2, Int));
+    return get_type();
+}
+
+Symbol divide_class::type_check(ClassTable *p)
+{
+    set_type(bin_expr_check(p, e1, e2, Int));
+    return get_type();
+}
+
+Symbol neg_class::type_check(ClassTable *p)
+{
+    set_type(e1->type_check(p));
+    if (*get_type() != *Int)
+    {
+        p->semant_error(p->get_class()) << "Expression must be Int\n";
+    }
+    return get_type();
+}
+
+Symbol lt_class::type_check(ClassTable *p)
+{
+    if (bin_expr_check(p, e1, e2) != nullptr)
+    {
+        set_type(Bool);
+    }
+    return Bool;
+}
+
+Symbol eq_class::type_check(ClassTable *p)
+{
+    unordered_set<Symbol> s{Int, Bool, Str};
+    auto t1 = e1->type_check(p);
+    if (t1 == nullptr)
+        return nullptr;
+    auto t2 = e2->type_check(p);
+    if (t2 == nullptr)
+        return nullptr;
+    if (s.find(t1) != s.end() || s.find(t2) != s.end())
+    {
+        if (*t1 != *t2)
+        {
+            p->semant_error(p->get_class()) << "Types are incompatible\n";
+            return nullptr;
+        }
+    }
+
+    set_type(Bool);
+    return get_type();
+}
+
+Symbol leq_class::type_check(ClassTable *p)
+{
+    if (bin_expr_check(p, e1, e2, Int) != nullptr)
+    {
+        set_type(Bool);
+    }
+    return Bool;
+}
+
+Symbol comp_class::type_check(ClassTable *p)
+{
+    auto type = e1->type_check(p);
+    if (*type != *Bool)
+    {
+        p->semant_error(p->get_class()) << "Expression must be Bool\n";
+        return nullptr;
+    }
+    set_type(type);
+    return type;
+}
+
+Symbol int_const_class::type_check(ClassTable *p)
+{
+    set_type(Int);
+    return Int;
+}
+
+Symbol bool_const_class::type_check(ClassTable *p)
+{
+    set_type(Bool);
+    return Bool;
+}
+
+Symbol string_const_class::type_check(ClassTable *p)
+{
+    set_type(Str);
+    return Str;
+}
+
+Symbol new__class::type_check(ClassTable *p)
+{
+    auto tp = *type_name == *SELF_TYPE ? p->get_class()->get_name() : type_name;
+    if (p->get_class(tp) == nullptr)
+    {
+        p->semant_error(p->get_class()) << "Type " << type_name << " doesn't exist\n";
+        return nullptr;
+    }
+    set_type(type_name);
+    return get_type();
+}
+
+Symbol isvoid_class::type_check(ClassTable *p)
+{
+    auto type = e1->type_check(p);
+    if (type == nullptr)
+    {
+        return type;
+    }
+    if (*type != *Bool)
+    {
+        p->semant_error(p->get_class()) << "Expression must be boolean\n";
+        return nullptr;
+    }
+    set_type(Bool);
+    return get_type();
+}
+
+Symbol no_expr_class::type_check(ClassTable *p)
+{
+    set_type(No_type);
+    return get_type();
+}
+
+Symbol object_class::type_check(ClassTable *p)
+{
+    Class_ cls;
+    if (*name == *self)
+    {
+        set_type(SELF_TYPE);
+    }
+    else
+    {
+        auto type = p->lookup(p->attrs, p->get_class()->get_name(), name);
+        if (type == nullptr)
+        {
+            p->semant_error(p->get_class()) << "Variable " << name << " not found\n";
+            return nullptr;
+        }
+        set_type(type);
+    }
+    return get_type();
+}
