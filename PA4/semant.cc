@@ -125,17 +125,20 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
         auto class_name = cls->get_name();
         auto parent = cls->get_parent();
 
+        //class must not already exist
         if (class_name == SELF_TYPE || classes_.find(class_name) != classes_.end()) {
             semant_error(cls) << class_name << "redeclared" << endl;
             return;
         }
 
+        // classes cannot be a subclass of Bool or Str
         auto it = invalid_parents.find(parent);
         if (it != invalid_parents.end()) {
             semant_error(cls) << "Class " << cls->get_name() << " cannot inherit from " << *it << "\n";
             return;
         }
 
+        //add class to class map
         classes_[class_name] = cls;
     }
 
@@ -175,11 +178,13 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
         //return;
     }
 
+    //setup symtab for each class
     for (auto cls: classes_) {
         attrs[cls.second->get_name()].enterscope();
         methods[cls.second->get_name()].enterscope();
     }
 
+    //add features (methods and variables) to class table for predefined classes
     vector<Symbol> predefined_classes{Object, IO, Int, Bool, Str};
     for (auto cls_name: predefined_classes) {
         auto cls = get_class(cls_name);
@@ -192,6 +197,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
         }
     }
 
+    //add features to class table for all other classes
     for (auto cls : *classes)
     {
         set_current_class(cls);
@@ -205,6 +211,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
         }
     }
 
+    //type check all features of all classes
     for (auto cls : *classes)
     {
         set_current_class(cls);
@@ -238,7 +245,7 @@ bool ClassTable::leq(Symbol derived, Symbol ancestor) {
     return false;
 }
 
-
+//return CLass_ object for given name
 Class_ ClassTable::get_class(Symbol name, bool report) {
     if (*name == *SELF_TYPE)
         return get_class();
@@ -271,6 +278,7 @@ bool ClassTable::has_cycle(Class_ cls) {
     return false;
 }
 
+//give least upper bound (lub) of classes a and b
 Symbol ClassTable::find_common_ancestor(Symbol a, Symbol b) {
     auto ca = get_class(a);
     if (ca == nullptr) {
@@ -302,6 +310,7 @@ Symbol ClassTable::find_common_ancestor(Symbol a, Symbol b) {
 }
 
 
+//given, only change was adding each predefined class to classes vector
 void ClassTable::install_basic_classes() {
 
     // The tree package uses these globals to annotate the classes built below.
@@ -471,7 +480,9 @@ void program_class::semant()
 
 //-------------------------------------------------------------------------------
 
+//add a method to class definition
 void method_class::add(ClassTable *p) {
+    //return current class
     auto cls = p->get_class();
     auto &symtab = p->methods.find(cls->get_name())->second;
 
@@ -479,10 +490,11 @@ void method_class::add(ClassTable *p) {
         p->semant_error(cls) << "Method redefinition: " << name << "\n";
         return;
     }
-
+    //adds new method to symtab
     symtab.addid(name, this);
 }
 
+//same thing but attributes (variables)
 void attr_class::add(ClassTable *p) {
     auto cls = p->get_class();
 
