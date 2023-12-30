@@ -118,6 +118,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
     install_basic_classes();
 
+    //classes cannot be a subclass of Bool or Str
     unordered_set<Symbol> invalid_parents{Bool, Str};
 
     for (auto cls: *classes){

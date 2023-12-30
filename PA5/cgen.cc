@@ -21,6 +21,11 @@
 // fill in the rest.
 //
 //**************************************************************
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+#include <stack>
 
 #include "cgen.h"
 #include "cgen_gc.h"
