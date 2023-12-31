@@ -1424,13 +1424,123 @@ void dispatch_class::code(ostream &s, Environment env) {
 }
 
 void cond_class::code(ostream &s, Environment env) {
+  s << "\t# If statement. First eval condition." << endl;
+  pred->code(s, env);
+
+  s << "\t# extract bool content from acc to t1" << endl;
+  emit_fetch_int(T1, ACC, s);
+  s << endl;
+
+  //stores initial val, then adds
+  //so false - labelnum, finish - labelnum+1
+  int labelnum_false = labelnum++;
+  int labelnum_finish = labelnum++;
+
+  s << "\t# if t1 == 0 goto false" << endl;
+  //branch if equal
+  emit_beq(T1, ZERO, labelnum_false, s);
+  s << endl;
+
+  then_expr->code(s, env);
+
+  s << "\t# jumpt finish" << endl;
+  emit_branch(labelnum_finish, s);
+  s << endl;
+
+  s << "# False:" << endl;
+  emit_label_def(labelnum_false, s);
+
+  else_exp->code(s, env);
+
+  s << "# Finish:" << endl;
+  emit_label_def(labelnum_finish, s);
+
 }
 
-void loop_class::code(ostream &s) {
+void loop_class::code(ostream &s, Environment env) {
+  int start = labelnum;
+  int finish = labelnum + 1;
+  labelnum += 2;
+
+  s << "\t# While loop" << endl;
+  s << "\t# start:" << endl;
+  emit_label_def(start, s);
+
+  s << "\t# ACC = pred" << endl;
+  pred->code(s, env);
+
+  s << "\t# extract int inside bool" << endl;
+  emit_fetch_int(T1, ACC, s);
+  s << endl;
+
+  s << "\t# if pred == false jumpto finish" << endl;
+  emit_beq(T1, ZERO, finish, s);
+  s << endl;
+
+  body->code(s, env);
+
+  s << "\t# Jumpto start" << endl;
+  emit_branch(start, s);
+
+  s << "\t# Finish:" << endl;
+  emit_label_def(finish,s);
+
+  s << "\t# ACC = void" << endl;
+  emit_move(ACC, ZERO, s);
 }
 
-void typcase_class::code(ostream &s) {
+void typcase_class::code(ostream &s, Environment env) {
+  std::map<Symbol, int> _class_tags = codegen_classtable->GetClassTags();
+  std::vector<CgenNode*> _class_nodes = codengen_classtable->GetClassNodes();
+
+  s << "\t# case expr" << endl;
+  s << "\t# First eval e0" << endl;
+  expr->code(s, env);
+
+  s << "\t# If e0 = void, abort" << endl;
+  emit_bne(ACC, ZERO, label, s);
+  emit_load_adress(ACC, "str_const0", s)
+  emit_load_imm(T1, 1, s);
+  emit_jal("_case_abort2", s);
+
+  emit_label_def(labelnum, s);
+  ++labelnum;
+
+  s << "\t# T1 = type(acc)" << endl;
+  emit_load(T1, 0, ACC, s);
+
+  std::vector<branch_class*> _cases = GetCases();
+  int labelbeg = labelnum;
+  int finish = labelnum + _cases.size();
+  int caseidx = 0;
+  labelnum += _cases.size() + 1;
+
+  auto GetChildrenTagsSet = [&](std::vector<int> __cur_tags) {
+    std::vector<int> __children_tags;
+    for (int __curr_tag : __curr_tags) {
+      CgenNode* __curr_node = _class_nodes[__curr_tag];
+      std::vector<CgenNode*> __children_nodes = __curr_node->GetChildren();
+      for (CgenNode* __children_node : __children_nodes) {
+        int __children_tag = _class_tags[__children_node->name];
+        if (std::find(__childre_tags.begin(), __children_tags.end(), __children_tag) == __children_tags.end()) {
+          __children_tags.push_back(__children_tag);
+        }
+      }
+    }
+    return __children_tags;
+  };
+
+  auto HasFinished = [&](std::vector<std::vector<int> > __cases_tags) {
+        for (std::vector<int> __case_tags : __cases_tags) {
+            if (!__case_tags.empty()) {
+                return false;
+            }
+        }
+        return true;
+    };
 }
+
+
 
 void block_class::code(ostream &s) {
 }
