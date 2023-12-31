@@ -271,10 +271,8 @@ bool ClassTable::has_cycle(Class_ cls) {
             semant_error(classes_[parent]) << "Found hierachy cycle";
             return true;
         }
-
         s.insert(parent);
     }
-
     return false;
 }
 
@@ -289,14 +287,12 @@ Symbol ClassTable::find_common_ancestor(Symbol a, Symbol b) {
     if (cb == nullptr) {
         return nullptr;
     }
-
     //get all ancestors of class a
     std::unordered_set<Symbol> s{ca->get_name()};
     for (auto class_name = ca->get_parent(); *class_name != *No_class; class_name = ca->get_parent()) {
         s.insert(class_name);
         ca = get_class(class_name);
     }
-
     //get ancestors of class B, return first one that is in common with a
     for (auto class_name = cb->get_name(); *class_name != *No_class; class_name = cb->get_parent()) {
         cb = get_class(class_name);
@@ -304,7 +300,6 @@ Symbol ClassTable::find_common_ancestor(Symbol a, Symbol b) {
             return class_name;
         }
     }
-
     //no common acnestor
     return nullptr;
 }
@@ -464,17 +459,15 @@ ostream& ClassTable::semant_error()
      errors. Part 2) can be done in a second stage, when you want
      to build mycoolc.
  */
-void program_class::semant()
-{
+void program_class::semant() {
     initialize_constants();
 
-    /* ClassTable constructor may do some semantic analysis */
     //all type checking is done in constructor
     ClassTable *classtable = new ClassTable(classes);
 
     if (classtable->errors()) {
-	cerr << "Compilation halted due to static semantic errors." << endl;
-	exit(1);
+        cerr << "Compilation halted due to static semantic errors." << endl;
+        exit(1);
     }
 }
 
