@@ -1537,18 +1537,125 @@ void typcase_class::code(ostream &s, Environment env) {
             }
         }
         return true;
-    };
+  };
+
+  // Generate first round cases_tags
+  std::vector<std::vector<int>> cases_tags;
+  for (branch_class* _case : _cases) {
+    Symbol _type_decl = _case->type_decl;
+    int _class_tag = _class_tags[_type_decl];
+    std::vector<int> case_tags = { _class_tag };
+    cases_tags.push_back(case_tags);
+  }
+
+  while (!HasFinished(cases_tags)) {
+    //print cases_tags
+    for (int caseidx = 0; caseidx < cases_tags.size(); ++caseidx) {
+      std::vector<int> case_tags = cases_tags[caseidx];
+      for (int case_tag : case_tags) {
+        s << "\t# tag = " << case_tag << " : goto case " << caseidx << endl;
+        emit_load_imm(T2, case_tag, s);
+        emit_beq(T1, T2, labelbeg + caseidx, s);
+        s << endl;
+      }
+    }
+    s << "\t# ------------" << endl;
+
+    for (int i = 0; i< cases_tags.size() ++i) {
+      cases_tags[i] = GetChildrenTagsSet(cases_tags[i]);
+    }
+  }
+
+  s << "\t# No Match" << endl;
+  emit_jal("_case_abort", s);
+  emit_branch(finish, s);
+
+  for (branch_class* _case : _cases) {
+    Symbol _name = _case->name;
+    Symbol _type_decl = _case->type_decl;
+    Expression _expr = _case->expr;
+
+    s << "# eval expr " << caseidx << endl;
+    emit_label_def(labelbeg + caseidx, s);
+    env.EnterScope();
+    env.AddVar(_name);
+    emit_push(ACC, s);
+    _expr->code(s, env);
+    emit_addiu(SP, SP, 4, s);
+
+    s << "\t# Jumpto finish" << endl;
+    emit_branch(finish, s);
+    ++caseidx;
+  }
+
+  s << "#finish:" << endl;
+  emit_label_def(finish, s);
+  s << endl;
 }
 
-
-
-void block_class::code(ostream &s) {
+void block_class::code(ostream &s, Environment env) {
+  for (int i = body->first(); body->more(i); i = body->next(i)) {
+    body->nth(i)->code(s,env);
+  }
 }
 
-void let_class::code(ostream &s) {
+void let_class::code(ostream &s, Environment env) {
+  s << "\t# Let expr" << endl;
+  s << "\t# first eval init" << endl;
+  init->code(s, env);
+
+  if (init->IsEmpty()) {
+    if (type_decl == Str) {
+      emit_load_string(ACC, stringtable.lookup_string(""), s);
+    } else if (type_decl == Int) {
+      emit_load_int(ACC, inttable.lookup_string("0"), s);
+    } else if (type_decl == Bool) {
+      emit_load_bool(ACC, BoolConst(0), s);
+    }
+  }
+
+  s << "\t# push " << endl;
+  emit_push(ACC, s);
+  s << endl;
+
+  env.EnterScope();
+  env.AddVar(identifier);
+
+  body->code(s, env);
+
+  s << "\t# pop" << endl;
+  emit_addiu(SP, SP, 4, s);
+  s << endl;
 }
 
-void plus_class::code(ostream &s) {
+void plus_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : Add" << endl;
+  s << "\t# First eval e1 and push." << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2 and make a copy for result" << endl;
+  e2->code(s, env);
+  emit_jal("Object.copy", s);
+  s << endl;
+
+  s << "\t# pop e1 to t1, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract the int inside the object." << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+
+  s << "\t# Modify the int inside t2" << endl;
+  emit_add(T3, T1, T2, s);
+  emit_story(T3, 3, ACC, s);
+  s << endl;
 }
 
 void sub_class::code(ostream &s) {
