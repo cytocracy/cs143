@@ -164,171 +164,177 @@ void program_class::cgen(ostream &os)
 //
 //////////////////////////////////////////////////////////////////////////////
 
-static void emit_load(char *dest_reg, int offset, char *source_reg, ostream& s)
-{
-  s << LW << dest_reg << " " << offset * WORD_SIZE << "(" << source_reg << ")" 
-    << endl;
-}
-
-static void emit_store(char *source_reg, int offset, char *dest_reg, ostream& s)
-{
-  s << SW << source_reg << " " << offset * WORD_SIZE << "(" << dest_reg << ")"
+static void emit_load(const char* dest_reg, int offset, const char* source_reg, ostream& s) {
+    s << LW << dest_reg << " " << offset* WORD_SIZE << "(" << source_reg << ")"
       << endl;
 }
 
-static void emit_load_imm(char *dest_reg, int val, ostream& s)
-{ s << LI << dest_reg << " " << val << endl; }
-
-static void emit_load_address(char *dest_reg, char *address, ostream& s)
-{ s << LA << dest_reg << " " << address << endl; }
-
-static void emit_partial_load_address(char *dest_reg, ostream& s)
-{ s << LA << dest_reg << " "; }
-
-static void emit_load_bool(char *dest, const BoolConst& b, ostream& s)
-{
-  emit_partial_load_address(dest,s);
-  b.code_ref(s);
-  s << endl;
+static void emit_store(const char* source_reg, int offset, const char* dest_reg, ostream& s) {
+    s << SW << source_reg << " " << offset* WORD_SIZE << "(" << dest_reg << ")"
+      << endl;
 }
 
-static void emit_load_string(char *dest, StringEntry *str, ostream& s)
-{
-  emit_partial_load_address(dest,s);
-  str->code_ref(s);
-  s << endl;
+static void emit_load_imm(const char* dest_reg, int val, ostream& s) {
+    s << LI << dest_reg << " " << val << endl;
 }
 
-static void emit_load_int(char *dest, IntEntry *i, ostream& s)
-{
-  emit_partial_load_address(dest,s);
-  i->code_ref(s);
-  s << endl;
+static void emit_load_address(const char* dest_reg, const char* address, ostream& s) {
+    s << LA << dest_reg << " " << address << endl;
 }
 
-static void emit_move(char *dest_reg, char *source_reg, ostream& s)
-{ s << MOVE << dest_reg << " " << source_reg << endl; }
-
-static void emit_neg(char *dest, char *src1, ostream& s)
-{ s << NEG << dest << " " << src1 << endl; }
-
-static void emit_add(char *dest, char *src1, char *src2, ostream& s)
-{ s << ADD << dest << " " << src1 << " " << src2 << endl; }
-
-static void emit_addu(char *dest, char *src1, char *src2, ostream& s)
-{ s << ADDU << dest << " " << src1 << " " << src2 << endl; }
-
-static void emit_addiu(char *dest, char *src1, int imm, ostream& s)
-{ s << ADDIU << dest << " " << src1 << " " << imm << endl; }
-
-static void emit_div(char *dest, char *src1, char *src2, ostream& s)
-{ s << DIV << dest << " " << src1 << " " << src2 << endl; }
-
-static void emit_mul(char *dest, char *src1, char *src2, ostream& s)
-{ s << MUL << dest << " " << src1 << " " << src2 << endl; }
-
-static void emit_sub(char *dest, char *src1, char *src2, ostream& s)
-{ s << SUB << dest << " " << src1 << " " << src2 << endl; }
-
-static void emit_sll(char *dest, char *src1, int num, ostream& s)
-{ s << SLL << dest << " " << src1 << " " << num << endl; }
-
-static void emit_jalr(char *dest, ostream& s)
-{ s << JALR << "\t" << dest << endl; }
-
-static void emit_jal(char *address,ostream &s)
-{ s << JAL << address << endl; }
-
-static void emit_return(ostream& s)
-{ s << RET << endl; }
-
-static void emit_gc_assign(ostream& s)
-{ s << JAL << "_GenGC_Assign" << endl; }
-
-static void emit_disptable_ref(Symbol sym, ostream& s)
-{  s << sym << DISPTAB_SUFFIX; }
-
-static void emit_init_ref(Symbol sym, ostream& s)
-{ s << sym << CLASSINIT_SUFFIX; }
-
-static void emit_label_ref(int l, ostream &s)
-{ s << "label" << l; }
-
-static void emit_protobj_ref(Symbol sym, ostream& s)
-{ s << sym << PROTOBJ_SUFFIX; }
-
-static void emit_method_ref(Symbol classname, Symbol methodname, ostream& s)
-{ s << classname << METHOD_SEP << methodname; }
-
-static void emit_label_def(int l, ostream &s)
-{
-  emit_label_ref(l,s);
-  s << ":" << endl;
+static void emit_partial_load_address(const char* dest_reg, ostream& s) {
+    s << LA << dest_reg << " ";
 }
 
-static void emit_beqz(char *source, int label, ostream &s)
-{
-  s << BEQZ << source << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_load_bool(const char* dest, const BoolConst& b, ostream& s) {
+    emit_partial_load_address(dest, s);
+    b.code_ref(s);
+    s << endl;
 }
 
-static void emit_beq(char *src1, char *src2, int label, ostream &s)
-{
-  s << BEQ << src1 << " " << src2 << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_load_string(const char* dest, StringEntry* str, ostream& s) {
+    emit_partial_load_address(dest, s);
+    str->code_ref(s);
+    s << endl;
 }
 
-static void emit_bne(char *src1, char *src2, int label, ostream &s)
-{
-  s << BNE << src1 << " " << src2 << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_load_int(const char* dest, IntEntry* i, ostream& s) {
+    emit_partial_load_address(dest, s);
+    i->code_ref(s);
+    s << endl;
 }
 
-static void emit_bleq(char *src1, char *src2, int label, ostream &s)
-{
-  s << BLEQ << src1 << " " << src2 << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_move(const char* dest_reg, const char* source_reg, ostream& s) {
+    s << MOVE << dest_reg << " " << source_reg << endl;
 }
 
-static void emit_blt(char *src1, char *src2, int label, ostream &s)
-{
-  s << BLT << src1 << " " << src2 << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_neg(const char* dest, const char* src1, ostream& s) {
+    s << NEG << dest << " " << src1 << endl;
 }
 
-static void emit_blti(char *src1, int imm, int label, ostream &s)
-{
-  s << BLT << src1 << " " << imm << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_add(const char* dest, const char* src1, const char* src2, ostream& s) {
+    s << ADD << dest << " " << src1 << " " << src2 << endl;
 }
 
-static void emit_bgti(char *src1, int imm, int label, ostream &s)
-{
-  s << BGT << src1 << " " << imm << " ";
-  emit_label_ref(label,s);
-  s << endl;
+static void emit_addu(const char* dest, const char* src1, const char* src2, ostream& s) {
+    s << ADDU << dest << " " << src1 << " " << src2 << endl;
 }
 
-static void emit_branch(int l, ostream& s)
-{
-  s << BRANCH;
-  emit_label_ref(l,s);
-  s << endl;
+static void emit_addiu(const char* dest, const char* src1, int imm, ostream& s) {
+    s << ADDIU << dest << " " << src1 << " " << imm << endl;
+}
+
+static void emit_div(const char* dest, const char* src1, const char* src2, ostream& s) {
+    s << DIV << dest << " " << src1 << " " << src2 << endl;
+}
+
+static void emit_mul(const char* dest, const char* src1, const char* src2, ostream& s) {
+    s << MUL << dest << " " << src1 << " " << src2 << endl;
+}
+
+static void emit_sub(const char* dest, const char* src1, const char* src2, ostream& s) {
+    s << SUB << dest << " " << src1 << " " << src2 << endl;
+}
+
+static void emit_sll(const char* dest, const char* src1, int num, ostream& s) {
+    s << SLL << dest << " " << src1 << " " << num << endl;
+}
+
+static void emit_jalr(const char* dest, ostream& s) {
+    s << JALR << "\t" << dest << endl;
+}
+
+static void emit_jal(const char* address, ostream& s) {
+    s << JAL << address << endl;
+}
+
+static void emit_return(ostream& s) {
+    s << RET << endl;
+}
+
+static void emit_gc_assign(ostream& s) {
+    s << JAL << "_GenGC_Assign" << endl;
+}
+
+static void emit_disptable_ref(Symbol sym, ostream& s) {
+    s << sym << DISPTAB_SUFFIX;
+}
+
+static void emit_init_ref(Symbol sym, ostream& s) {
+    s << sym << CLASSINIT_SUFFIX;
+}
+
+static void emit_label_ref(int l, ostream& s) {
+    s << "label" << l;
+}
+
+static void emit_protobj_ref(Symbol sym, ostream& s) {
+    s << sym << PROTOBJ_SUFFIX;
+}
+
+static void emit_method_ref(Symbol classname, Symbol methodname, ostream& s) {
+    s << classname << METHOD_SEP << methodname;
+}
+
+static void emit_label_def(int l, ostream& s) {
+    emit_label_ref(l, s);
+    s << ":" << endl;
+}
+
+static void emit_beqz(char* source, int label, ostream& s) {
+    s << BEQZ << source << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_beq(const char* src1, const char* src2, int label, ostream& s) {
+    s << BEQ << src1 << " " << src2 << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_bne(const char* src1, const char* src2, int label, ostream& s) {
+    s << BNE << src1 << " " << src2 << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_bleq(const char* src1, const char* src2, int label, ostream& s) {
+    s << BLEQ << src1 << " " << src2 << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_blt(const char* src1, const char* src2, int label, ostream& s) {
+    s << BLT << src1 << " " << src2 << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_blti(const char* src1, int imm, int label, ostream& s) {
+    s << BLT << src1 << " " << imm << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_bgti(const char* src1, int imm, int label, ostream& s) {
+    s << BGT << src1 << " " << imm << " ";
+    emit_label_ref(label, s);
+    s << endl;
+}
+
+static void emit_branch(int l, ostream& s) {
+    s << BRANCH;
+    emit_label_ref(l, s);
+    s << endl;
 }
 
 //
 // Push a register on the stack. The stack grows towards smaller addresses.
 //
-static void emit_push(char *reg, ostream& str)
-{
-  emit_store(reg,0,SP,str);
-  emit_addiu(SP,SP,-4,str);
+static void emit_push(char* reg, ostream& str) {
+    emit_store(reg, 0, SP, str);
+    emit_addiu(SP, SP, -4, str);
 }
 
 //
@@ -336,33 +342,34 @@ static void emit_push(char *reg, ostream& str)
 // Emits code to fetch the integer value of the Integer object pointed
 // to by register source into the register dest
 //
-static void emit_fetch_int(char *dest, char *source, ostream& s)
-{ emit_load(dest, DEFAULT_OBJFIELDS, source, s); }
+static void emit_fetch_int(const char* dest, char* source, ostream& s) {
+    emit_load(dest, DEFAULT_OBJFIELDS, source, s);
+}
 
 //
 // Emits code to store the integer value contained in register source
 // into the Integer object pointed to by dest.
 //
-static void emit_store_int(char *source, char *dest, ostream& s)
-{ emit_store(source, DEFAULT_OBJFIELDS, dest, s); }
-
-
-static void emit_test_collector(ostream &s)
-{
-  emit_push(ACC, s);
-  emit_move(ACC, SP, s); // stack end
-  emit_move(A1, ZERO, s); // allocate nothing
-  s << JAL << gc_collect_names[cgen_Memmgr] << endl;
-  emit_addiu(SP,SP,4,s);
-  emit_load(ACC,0,SP,s);
+static void emit_store_int(char* source, const char* dest, ostream& s) {
+    emit_store(source, DEFAULT_OBJFIELDS, dest, s);
 }
 
-static void emit_gc_check(char *source, ostream &s)
-{
-  if (std::string(source) != std::string(A1)) emit_move(A1, source, s);
-  s << JAL << "_gc_check" << endl;
+
+static void emit_test_collector(ostream& s) {
+    emit_push(ACC, s);
+    emit_move(ACC, SP, s); // stack end
+    emit_move(A1, ZERO, s); // allocate nothing
+    s << JAL << gc_collect_names[cgen_Memmgr] << endl;
+    emit_addiu(SP, SP, 4, s);
+    emit_load(ACC, 0, SP, s);
 }
 
+static void emit_gc_check(char* source, ostream& s) {
+    if (std::string(source) != std::string(A1)) {
+        emit_move(A1, source, s);
+    }
+    s << JAL << "_gc_check" << endl;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -500,13 +507,13 @@ void BoolConst::code_def(ostream& s, int boolclasstag)
       << WORD;
 
  /***** Add dispatch information for class Bool ******/
-      s << Bool << DISPTAB_SUFFIX
+      s << Bool << DISPTAB_SUFFIX;
 
       s << endl;                                            // dispatch table
       s << WORD << val << endl;                             // value (0 or 1)
 }
 
-int Environment::addObstacle() {
+int Environment::AddObstacle() {
   EnterScope();
   return AddVar(No_class);
 }
@@ -682,11 +689,11 @@ void CgenClassTable::code_dispatchTabs() {
     str << LABEL;
     std::vector<method_class*> full_methods = _class_node->GetFullMethods();
     std::map<Symbol, Symbol> dispatch_class_tab = _class_node->GetDispatchClassTab();
-    std::map<Symbol, int> dispatch_inx_tab = _class_node->GetDispatchIdxTab();
+    std::map<Symbol, int> dispatch_idx_tab = _class_node->GetDispatchIdxTab();
     for (method_class* _method : full_methods) {
       Symbol _method_name = _method->name;
       Symbol _class_name = dispatch_class_tab[_method_name];
-      int _ix = dispatch_idx_tab[_method_name];
+      int _idx = dispatch_idx_tab[_method_name];
       //add a comment
       str << "\t# method # " << _idx << endl;
       str << WORD;
@@ -741,8 +748,8 @@ std::vector<attr_class*> CgenNode::GetFullAttribs() {
   if (m_full_attribs.empty()) {
     std::vector<CgenNode*> inheritance = GetInheritance();
     for (CgenNode* class_node : inheritance) {
-      Features features = class_node->features:
-      for (int j = features->first(); features->more(j); j j = features->next(j)) {
+      Features features = class_node->features;
+      for (int j = features->first(); features->more(j); j = features->next(j)) {
         Feature feature = features->nth(j);
         if (!feature->IsMethod()) {
           m_full_attribs.push_back((attr_class*)feature);
@@ -770,7 +777,7 @@ std::vector<attr_class*> CgenNode::GetAttribs() {
   return m_attribs;
 }
 
-std::map<Symbol, int> CgenNode::GetAttribInxTab() {
+std::map<Symbol, int> CgenNode::GetAttribIdxTab() {
   GetFullAttribs();
   return m_attrib_idx_tab;
 }
@@ -778,7 +785,7 @@ std::map<Symbol, int> CgenNode::GetAttribInxTab() {
 std::vector<method_class*> CgenNode::GetMethods() {
   if (m_methods.empty()) {
     for (int i = features->first(); features->more(i); i= features->next(i)) {
-      Feature feature = feature->nth(i);
+      Feature feature = features->nth(i);
       if (feature->IsMethod()) {
         m_methods.push_back((method_class*)feature);
       }
@@ -790,18 +797,18 @@ std::vector<method_class*> CgenNode::GetMethods() {
 std::vector<method_class*> CgenNode::GetFullMethods() {
   if (m_full_methods.empty()) {
     std::vector<CgenNode*> inheritance = GetInheritance();
-    for (CgenNode* _class_node : inheritence) {
+    for (CgenNode* _class_node : inheritance) {
       Symbol _class_name = _class_node->name;
       std::vector<method_class*> _methods = _class_node->GetMethods();
       for (method_class* _method : _methods) {
         Symbol _method_name = _method->name;
         if (m_dispatch_idx_tab.find(_method_name) == m_dispatch_idx_tab.end()) {
           m_full_methods.push_back(_method);
-          m_dispatch_idx_tab_[_method_name] = m_full_methods.size() -1;
+          m_dispatch_idx_tab[_method_name] = m_full_methods.size() -1;
           //map method name to class name so you know which class to get method from (useful when methods override)
           m_dispatch_class_tab[_method_name] = _class_name;
         } else {
-          int idx = m_dispatch idx_tab[_method_name];
+          int idx = m_dispatch_idx_tab[_method_name];
           m_full_methods[idx] = _method;
           m_dispatch_class_tab[_method_name] = _class_name;
         }
@@ -944,7 +951,7 @@ void CgenNode::code_init(ostream& s) {
   std::map<Symbol, int> attrib_idx_tab = GetAttribIdxTab();
   for (attr_class* attrib : attribs) {
     s << "\t# init attrib " << attrib->name << endl;
-    int ix = attrib_idx_tab[attrib->name];
+    int idx = attrib_idx_tab[attrib->name];
 
     if (attrib->init->IsEmpty()) {
       if (attrib->type_decl == Str) {
@@ -1441,7 +1448,7 @@ void cond_class::code(ostream &s, Environment env) {
   emit_beq(T1, ZERO, labelnum_false, s);
   s << endl;
 
-  then_expr->code(s, env);
+  then_exp->code(s, env);
 
   s << "\t# jumpt finish" << endl;
   emit_branch(labelnum_finish, s);
@@ -1491,15 +1498,15 @@ void loop_class::code(ostream &s, Environment env) {
 
 void typcase_class::code(ostream &s, Environment env) {
   std::map<Symbol, int> _class_tags = codegen_classtable->GetClassTags();
-  std::vector<CgenNode*> _class_nodes = codengen_classtable->GetClassNodes();
+  std::vector<CgenNode*> _class_nodes = codegen_classtable->GetClassNodes();
 
   s << "\t# case expr" << endl;
   s << "\t# First eval e0" << endl;
   expr->code(s, env);
 
   s << "\t# If e0 = void, abort" << endl;
-  emit_bne(ACC, ZERO, label, s);
-  emit_load_adress(ACC, "str_const0", s)
+  emit_bne(ACC, ZERO, labelnum, s);
+  emit_load_address(ACC, "str_const0", s);
   emit_load_imm(T1, 1, s);
   emit_jal("_case_abort2", s);
 
@@ -1515,14 +1522,14 @@ void typcase_class::code(ostream &s, Environment env) {
   int caseidx = 0;
   labelnum += _cases.size() + 1;
 
-  auto GetChildrenTagsSet = [&](std::vector<int> __cur_tags) {
+  auto GetChildrenTagsSet = [&](std::vector<int> __curr_tags) {
     std::vector<int> __children_tags;
     for (int __curr_tag : __curr_tags) {
       CgenNode* __curr_node = _class_nodes[__curr_tag];
       std::vector<CgenNode*> __children_nodes = __curr_node->GetChildren();
       for (CgenNode* __children_node : __children_nodes) {
         int __children_tag = _class_tags[__children_node->name];
-        if (std::find(__childre_tags.begin(), __children_tags.end(), __children_tag) == __children_tags.end()) {
+        if (std::find(__children_tags.begin(), __children_tags.end(), __children_tag) == __children_tags.end()) {
           __children_tags.push_back(__children_tag);
         }
       }
@@ -1561,7 +1568,7 @@ void typcase_class::code(ostream &s, Environment env) {
     }
     s << "\t# ------------" << endl;
 
-    for (int i = 0; i< cases_tags.size() ++i) {
+    for (int i = 0; i< cases_tags.size(); ++i) {
       cases_tags[i] = GetChildrenTagsSet(cases_tags[i]);
     }
   }
@@ -1654,35 +1661,246 @@ void plus_class::code(ostream &s, Environment env) {
 
   s << "\t# Modify the int inside t2" << endl;
   emit_add(T3, T1, T2, s);
-  emit_story(T3, 3, ACC, s);
+  emit_store(T3, 3, ACC, s);
   s << endl;
 }
 
-void sub_class::code(ostream &s) {
+void sub_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : sub" << endl;
+  s << "\t# First eval e1 and push" << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2 and make a copy for result." << endl;
+  e2->code(s, env);
+  emit_jal("Object.copy", s);
+  s << endl;
+
+  s << "\t# Let's pop e1 to t2, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract int inside the object." << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+
+  s << "\t# Modify the intit inside t2." << endl;
+  emit_sub(T3, T1, T2, s);
+  emit_store(T3, 3, ACC, s);
+  s << endl;
 }
 
-void mul_class::code(ostream &s) {
+void mul_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : Mul" << endl;
+  s << "\t# First eval e1 and push." << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2 and make a copy for result." << endl;
+  e2->code(s, env);
+  emit_jal("Object.copy", s);
+  s << endl;
+
+  s << "\t# pop e1 to t1, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract int inside object." << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+
+  s << "\t# Modify the int inside t2." << endl;
+  emit_mul(T3, T1, T2, s);
+  emit_store(T3, 3, ACC, s);
+  s << endl;
 }
 
-void divide_class::code(ostream &s) {
+void divide_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : Division" << endl;
+  s << "\t# First eval e1 and push." << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2 and make a copy for result." << endl;
+  e2->code(s, env);
+  emit_jal("Object.copy", s);
+  s << endl;
+
+  s << "\t# Pop e1 to t1, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract int from object" << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+
+  s << "\t# Modify the int inside t2" << endl;
+  emit_div(T3, T1, T2, s);
+  emit_store(T3, 3, ACC, s);
+  s << endl;
+
+  
 }
 
-void neg_class::code(ostream &s) {
+void neg_class::code(ostream &s, Environment env) {
+  s << "\t# Neg" << endl;
+  s << "\t# Eval e1 and make a copy for result" << endl;
+  e1->code(s, env);
+  emit_jal("Object.copy", s);
+  s << endl;
+
+  emit_load(T1, 3, ACC, s);
+  emit_neg(T1, T1, s);
+  emit_store(T1, 3, ACC, s);
+  s << endl;
 }
 
-void lt_class::code(ostream &s) {
+void lt_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : < " << endl;
+  s << "\t# First eval e1 and push" << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2." << endl;
+  e2->code(s, env);
+  s << endl;
+
+  s << "\t# pop e1 to t1, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  //pointer to e1 in t1
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract the ints from objs" << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+  //actual int vals in t1 and t2 now
+
+  s << "\t# Assume t1 < t2" << endl;
+  emit_load_bool(ACC, BoolConst(1), s);
+  s << "\t# If t1 < t2 jumpto finish" << endl;
+  //branch less than
+  emit_blt(T1, T2, labelnum, s);
+
+  emit_load_bool(ACC, BoolConst(0), s);
+  emit_label_def(labelnum, s);
+
+  ++labelnum;
 }
 
-void eq_class::code(ostream &s) {
+void eq_class::code(ostream &s, Environment env) {
+  s << "\t# equal" << endl;
+  s << "\t# First eval e1 and push." << endl;
+  e1->code(s,env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2" << endl;
+  e2->code(s, env);
+  s << endl;
+
+  s << "\t# pop e1 to t1, e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  if (e1->type == Int || e1->type == Str || e1->type == Bool) {
+    if (e2->type == Int || e2->type == Str || e2->type == Bool) {
+      emit_load_bool(ACC, BoolConst(1), s);
+      emit_load_bool(A1, BoolConst(0), s);
+      emit_jal("equality_test", s);
+      return;
+    }
+  }
+
+  s << "\t# Assume t1 = t2" << endl;
+  emit_load_bool(ACC, BoolConst(1), s);
+  s << "\t# compare the pointers" << endl;
+  emit_beq(T1, T2, labelnum, s);
+  emit_load_bool(ACC, BoolConst(0), s);
+  emit_label_def(labelnum, s);
+  ++labelnum;
 }
 
-void leq_class::code(ostream &s) {
+void leq_class::code(ostream &s, Environment env) {
+  s << "\t# Int operation : Less or equal" << endl;
+  s << "\t# First eval e1 and push" << endl;
+  e1->code(s, env);
+  emit_push(ACC, s);
+  env.AddObstacle();
+  s << endl;
+
+  s << "\t# Then eval e2" << endl;
+  e2->code(s, env);
+  s << endl;
+
+  s << "\t# Lets pop e1 to t1, move e2 to t2" << endl;
+  emit_addiu(SP, SP, 4, s);
+  emit_load(T1, 0, SP, s);
+  emit_move(T2, ACC, s);
+  s << endl;
+
+  s << "\t# Extract int from objects" << endl;
+  emit_load(T1, 3, T1, s);
+  emit_load(T2, 3, T2, s);
+  s << endl;
+
+  s << "\t# assume t1 < t2" << endl;
+  emit_load_bool(ACC, BoolConst(1), s);
+  s << "\t# If t1 < t2 jumpto finish" << endl;
+  emit_bleq(T1, T2, labelnum, s);
+
+  emit_load_bool(ACC, BoolConst(0), s);
+  emit_label_def(labelnum, s);
+
+  ++labelnum;
 }
 
-void comp_class::code(ostream &s) {
+void comp_class::code(ostream &s, Environment env) {
+  s << "\t# the 'not' operator" << endl;
+  s << "\t# First eval the bool" << endl;
+  e1->code(s, env);
+
+  s << "\t# Extract the int inside the bool" << endl;
+  emit_load(T1, 3, ACC, s);
+
+  s << "\t# Pretend ACC = false, then we need to construct true" << endl;
+  emit_load_bool(ACC, BoolConst(1), s);
+
+  s << "\t# If ACC = false, jumpto finish" << endl;
+  emit_beq(T1, ZERO, labelnum, s);
+
+  s << "\t# Load false" << endl;
+  emit_load_bool(ACC, BoolConst(0), s);
+
+  s << "\t# finish:" << endl;
+  emit_label_def(labelnum, s);
+
+  ++labelnum;
 }
 
-void int_const_class::code(ostream& s)  
+void int_const_class::code(ostream& s, Environment env)  
 {
   //
   // Need to be sure we have an IntEntry *, not an arbitrary Symbol
@@ -1690,26 +1908,121 @@ void int_const_class::code(ostream& s)
   emit_load_int(ACC,inttable.lookup_string(token->get_string()),s);
 }
 
-void string_const_class::code(ostream& s)
+void string_const_class::code(ostream& s, Environment env)
 {
   emit_load_string(ACC,stringtable.lookup_string(token->get_string()),s);
 }
 
-void bool_const_class::code(ostream& s)
+void bool_const_class::code(ostream& s, Environment env)
 {
   emit_load_bool(ACC, BoolConst(val), s);
 }
 
-void new__class::code(ostream &s) {
+void new__class::code(ostream &s, Environment env) {
+  if (type_name == SELF_TYPE) {
+    emit_load_address(T1, "class_objTab", s);
+
+    s << "\t# Find class tag." << endl;
+    emit_load(T2, 0, SELF, s);
+    s << endl;
+
+    s << "\t# Mult 3: Get protObj." << endl;
+    emit_sll(T2, T2, 3, s);
+    s << endl;
+
+    emit_addu(T1, T1, T2, s);
+    s << "\t# Push." << endl;
+    emit_push(T1, s);
+    s << endl;
+
+    s << "\t# Load protObj to ACC." << endl;
+    emit_load(ACC, 0, T1, s);
+    s << endl;
+    
+    emit_jal("Object.copy", s);
+
+    s << "\t# Pop protObj addr." << endl;
+    emit_load(T1, 1, SP, s);
+    emit_addiu(SP, SP, 4, s);
+    s << endl;
+
+    s << "\t# Get init address" << endl;
+    emit_load(T1, 1, T1, s);
+    s << endl;
+
+    s << "\t# Goto init" << endl;
+    emit_jalr(T1, s);
+    s << endl;
+
+    return;
+  }
+
+  std::string dest = type_name->get_string();
+  dest += PROTOBJ_SUFFIX;
+  emit_load_address(ACC, dest.c_str(), s);
+  emit_jal("Object.copy", s);
+  dest = type_name->get_string();
+  dest += CLASSINIT_SUFFIX;
+  emit_jal(dest.c_str(), s);
 }
 
-void isvoid_class::code(ostream &s) {
+void isvoid_class::code(ostream &s, Environment env) {
+  e1->code(s, env);
+  s << "\t# t1 = acc" << endl;
+  emit_move(T1, ACC, s);
+
+  s << "\t# First pretend t1 = void: acc = bool(1)" << endl;
+  emit_load_bool(ACC, BoolConst(1), s);
+  s << "\t# if t1 = void: jumpto finish" << endl;
+  emit_beq(T1, ZERO, labelnum, s);
+  s << endl;
+
+  s << "\t# acc != void" << endl;
+  emit_load_bool(ACC, BoolConst(0), s);
+  
+  s << "# finish:" << endl;
+  emit_label_def(labelnum, s);
+
+  ++labelnum;
 }
 
-void no_expr_class::code(ostream &s) {
+void no_expr_class::code(ostream &s, Environment env) {
+  emit_move(ACC, ZERO, s);
 }
 
-void object_class::code(ostream &s) {
+void object_class::code(ostream &s, Environment env) {
+  s << "\t# Object:" << endl;
+  int idx;
+
+  if ((idx = env.LookUpVar(name)) != -1) {
+    s << "\t# let variable" << endl;
+    emit_load(ACC, idx + 1, SP, s);
+    if (cgen_Memmgr == 1) {
+      emit_addiu(A1, SP, 4*(idx + 1), s);
+      emit_jal("_GenGC_Assign", s);
+    }
+  } else if ((idx = env.LookUpParam(name)) != -1) {
+    s << "\t# param" << endl;
+    emit_load(ACC, idx + 3, FP, s);
+    if (cgen_Memmgr == 1) {
+      emit_addiu(A1, FP, 4 * (idx + 3), s);
+      emit_jal("_GenGC_Assign", s);
+    }
+  } else if ((idx = env.LookUpAttrib(name)) != -1) {
+    s << "\t# attribute" << endl;
+    emit_load(ACC, idx + 3, SELF, s);
+    if (cgen_Memmgr == 1) {
+      emit_addiu(A1, SELF, 4* (idx + 3), s);
+      emit_jal("_GenGC_Assign", s);
+    }
+  } else if (name == self) {
+    s << "\t# self" << endl;
+    emit_move(ACC, SELF, s);
+  } else {
+    s << "Error! Object class" << endl;
+  }
+
+  s << endl;
 }
 
 
