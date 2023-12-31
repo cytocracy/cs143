@@ -775,6 +775,72 @@ std::map<Symbol, int> CgenNode::GetAttribInxTab() {
   return m_attrib_idx_tab;
 }
 
+std::vector<method_class*> CgenNode::GetMethods() {
+  if (m_methods.empty()) {
+    for (int i = features->first(); features->more(i); i= features->next(i)) {
+      Feature feature = feature->nth(i);
+      if (feature->IsMethod()) {
+        m_methods.push_back((method_class*)feature);
+      }
+    }
+  }
+  return m_methods;
+}
+
+std::vector<method_class*> CgenNode::GetFullMethods() {
+  if (m_full_methods.empty()) {
+    std::vector<CgenNode*> inheritance = GetInheritance();
+    for (CgenNode* _class_node : inheritence) {
+      Symbol _class_name = _class_node->name;
+      std::vector<method_class*> _methods = _class_node->GetMethods();
+      for (method_class* _method : _methods) {
+        Symbol _method_name = _method->name;
+        if (m_dispatch_idx_tab.find(_method_name) == m_dispatch_idx_tab.end()) {
+          m_full_methods.push_back(_method);
+          m_dispatch_idx_tab_[_method_name] = m_full_methods.size() -1;
+          m_dispatch_class_tab[_method_name] = _class_name;
+        } else {
+          int idx = m_dispatch idx_tab[_method_name];
+          m_full_methods[idx] = _method;
+          m_dispatch_class_tab[_method_name] = _class_name;
+        }
+      }
+    }
+  }
+  return m_full_methods;
+}
+
+std::map<Symbol,Symbol> CgenNode::GetDispatchClassTab() {
+  GetFullMethods();
+  return m_dispatch_class_tab;
+}
+
+std::map<Symbol, int> CgenNode::GetDispatchIdxTab() {
+  GetFullMethods();
+  return m_dispatch_idx_tab;
+}
+
+void method_class::code(ostream& s, CgenNode* class_node) {
+  emit_method_ref(class_node->name, name, s);
+  s << LABEL;
+  //frame pointer, next stack address, return address
+  s << "\t# push fp, s0, ra" << endl;
+  emit_addiu(SP, SP, -12, s);
+  emit_store(FP, 3, SP, s);
+  emit_store(SELF, 2, SP, s);
+  emit_store(RA, 1, SP, s);
+  s << endl;
+
+  s << "\t# fp now points to the return addr in the stack" << endl;
+  emit_addiu(FP, SP, 4, s);
+  s << endl;
+
+  s << "\t# SELF = a0" << endl;
+  emit_move(SELF, ACC, s);
+  s << endl;
+  
+}
+
 CgenClassTable::CgenClassTable(Classes classes, ostream& s) : nds(NULL) , str(s)
 {
    stringclasstag = 0 /* Change to your String class tag here */;
