@@ -1413,7 +1413,7 @@ void dispatch_class::code(ostream &s, Environment env) {
   }
 
   CgenNode* _class_node = codegen_classtable->GetClassNode(_class_name);
-  s << "t\# locate method in dispatch table" << endl;
+  s << "\t# locate method in dispatch table" << endl;
   s << "\t# t1 = self.dispTab" << endl;
   //2 offset from acc source
   emit_load(T1, 2, ACC, s);
