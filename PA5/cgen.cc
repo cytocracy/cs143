@@ -954,6 +954,8 @@ void CgenNode::code_init(ostream& s) {
     int idx = attrib_idx_tab[attrib->name];
 
     if (attrib->init->IsEmpty()) {
+      s << "\t# Woohoo1" << endl;
+
       if (attrib->type_decl == Str) {
         emit_load_string(ACC, stringtable.lookup_string(""), s);
         emit_store(ACC, 3 + idx, SELF, s);
@@ -965,6 +967,8 @@ void CgenNode::code_init(ostream& s) {
         emit_store(ACC, 3 + idx, SELF, s);
       }
     } else {
+      s << "\t# Woohoo2" << endl;
+
       Environment env;
       env.m_class_node = this;
       attrib->init->code(s, env);

@@ -507,6 +507,7 @@ Int_init:
 	jal	Object_init
 
 	# init attrib _val
+	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
 
@@ -536,6 +537,7 @@ Bool_init:
 	jal	Object_init
 
 	# init attrib _val
+	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
 
@@ -565,9 +567,11 @@ String_init:
 	jal	Object_init
 
 	# init attrib _val
+	# Woohoo1
 	la	$a0 int_const1
 	sw	$a0 12($s0)
 	# init attrib _str_field
+	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
 
@@ -625,9 +629,11 @@ Cons_init:
 	jal	List_init
 
 	# init attrib car
+	# Woohoo1
 	la	$a0 int_const1
 	sw	$a0 12($s0)
 	# init attrib cdr
+	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
 
@@ -657,6 +663,7 @@ Main_init:
 	jal	IO_init
 
 	# init attrib mylist
+	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
 
