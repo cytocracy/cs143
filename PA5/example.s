@@ -26,7 +26,7 @@ _MemMgr_COLLECTOR:
 _MemMgr_TEST:
 	.word	0
 	.word	-1
-str_const15:
+str_const27:
 	.word	4
 	.word	5
 	.word	String_dispTab
@@ -34,34 +34,61 @@ str_const15:
 	.byte	0	
 	.align	2
 	.word	-1
-str_const14:
+str_const26:
 	.word	4
 	.word	6
 	.word	String_dispTab
-	.word	int_const4
+	.word	int_const2
 	.ascii	"Main"
 	.byte	0	
 	.align	2
 	.word	-1
-str_const13:
+str_const25:
+	.word	4
+	.word	5
+	.word	String_dispTab
+	.word	int_const3
+	.ascii	"Nil"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const24:
 	.word	4
 	.word	6
 	.word	String_dispTab
-	.word	int_const4
+	.word	int_const2
 	.ascii	"Cons"
 	.byte	0	
 	.align	2
 	.word	-1
-str_const12:
+str_const23:
 	.word	4
-	.word	6
+	.word	7
 	.word	String_dispTab
 	.word	int_const4
-	.ascii	"List"
+	.ascii	"BookList"
 	.byte	0	
 	.align	2
 	.word	-1
-str_const11:
+str_const22:
+	.word	4
+	.word	6
+	.word	String_dispTab
+	.word	int_const5
+	.ascii	"Article"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const21:
+	.word	4
+	.word	6
+	.word	String_dispTab
+	.word	int_const2
+	.ascii	"Book"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const20:
 	.word	4
 	.word	6
 	.word	String_dispTab
@@ -70,16 +97,16 @@ str_const11:
 	.byte	0	
 	.align	2
 	.word	-1
-str_const10:
+str_const19:
 	.word	4
 	.word	6
 	.word	String_dispTab
-	.word	int_const4
+	.word	int_const2
 	.ascii	"Bool"
 	.byte	0	
 	.align	2
 	.word	-1
-str_const9:
+str_const18:
 	.word	4
 	.word	5
 	.word	String_dispTab
@@ -88,16 +115,16 @@ str_const9:
 	.byte	0	
 	.align	2
 	.word	-1
-str_const8:
+str_const17:
 	.word	4
 	.word	5
 	.word	String_dispTab
-	.word	int_const2
+	.word	int_const7
 	.ascii	"IO"
 	.byte	0	
 	.align	2
 	.word	-1
-str_const7:
+str_const16:
 	.word	4
 	.word	6
 	.word	String_dispTab
@@ -106,30 +133,111 @@ str_const7:
 	.byte	0	
 	.align	2
 	.word	-1
-str_const6:
+str_const15:
 	.word	4
 	.word	7
 	.word	String_dispTab
-	.word	int_const7
+	.word	int_const8
 	.ascii	"_prim_slot"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const14:
+	.word	4
+	.word	7
+	.word	String_dispTab
+	.word	int_const9
+	.ascii	"SELF_TYPE"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const13:
+	.word	4
+	.word	7
+	.word	String_dispTab
+	.word	int_const9
+	.ascii	"_no_class"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const12:
+	.word	4
+	.word	8
+	.word	String_dispTab
+	.word	int_const10
+	.ascii	"<basic class>"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const11:
+	.word	4
+	.word	7
+	.word	String_dispTab
+	.word	int_const11
+	.ascii	"PC Magazine"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const10:
+	.word	4
+	.word	6
+	.word	String_dispTab
+	.word	int_const5
+	.ascii	"Ulanoff"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const9:
+	.word	4
+	.word	9
+	.word	String_dispTab
+	.word	int_const12
+	.ascii	"The Top 100 CD_ROMs"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const8:
+	.word	4
+	.word	10
+	.word	String_dispTab
+	.word	int_const13
+	.ascii	"Aho, Sethi, and Ullman"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const7:
+	.word	4
+	.word	16
+	.word	String_dispTab
+	.word	int_const14
+	.ascii	"Compilers, Principles, Techniques, and Tools"
+	.byte	0	
+	.align	2
+	.word	-1
+str_const6:
+	.word	4
+	.word	12
+	.word	String_dispTab
+	.word	int_const15
+	.ascii	"- dynamic type was Article -\n"
 	.byte	0	
 	.align	2
 	.word	-1
 str_const5:
 	.word	4
-	.word	7
+	.word	11
 	.word	String_dispTab
-	.word	int_const8
-	.ascii	"SELF_TYPE"
+	.word	int_const16
+	.ascii	"- dynamic type was Book -\n"
 	.byte	0	
 	.align	2
 	.word	-1
 str_const4:
 	.word	4
-	.word	7
+	.word	8
 	.word	String_dispTab
-	.word	int_const8
-	.ascii	"_no_class"
+	.word	int_const10
+	.ascii	"periodical:  "
 	.byte	0	
 	.align	2
 	.word	-1
@@ -137,8 +245,8 @@ str_const3:
 	.word	4
 	.word	8
 	.word	String_dispTab
-	.word	int_const9
-	.ascii	"<basic class>"
+	.word	int_const17
+	.ascii	"author:     "
 	.byte	0	
 	.align	2
 	.word	-1
@@ -147,16 +255,16 @@ str_const2:
 	.word	5
 	.word	String_dispTab
 	.word	int_const0
-	.ascii	" "
+	.ascii	"\n"
 	.byte	0	
 	.align	2
 	.word	-1
 str_const1:
 	.word	4
-	.word	5
+	.word	8
 	.word	String_dispTab
-	.word	int_const0
-	.ascii	"\n"
+	.word	int_const17
+	.ascii	"title:      "
 	.byte	0	
 	.align	2
 	.word	-1
@@ -164,28 +272,76 @@ str_const0:
 	.word	4
 	.word	7
 	.word	String_dispTab
-	.word	int_const7
+	.word	int_const8
 	.ascii	"example.cl"
 	.byte	0	
 	.align	2
 	.word	-1
-int_const9:
+int_const17:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	12
+	.word	-1
+int_const16:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	26
+	.word	-1
+int_const15:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	29
+	.word	-1
+int_const14:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	44
+	.word	-1
+int_const13:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	22
+	.word	-1
+int_const12:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	19
+	.word	-1
+int_const11:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	11
+	.word	-1
+int_const10:
 	.word	2
 	.word	4
 	.word	Int_dispTab
 	.word	13
 	.word	-1
-int_const8:
+int_const9:
 	.word	2
 	.word	4
 	.word	Int_dispTab
 	.word	9
 	.word	-1
-int_const7:
+int_const8:
 	.word	2
 	.word	4
 	.word	Int_dispTab
 	.word	10
+	.word	-1
+int_const7:
+	.word	2
+	.word	4
+	.word	Int_dispTab
+	.word	2
 	.word	-1
 int_const6:
 	.word	2
@@ -197,13 +353,13 @@ int_const5:
 	.word	2
 	.word	4
 	.word	Int_dispTab
-	.word	5
+	.word	7
 	.word	-1
 int_const4:
 	.word	2
 	.word	4
 	.word	Int_dispTab
-	.word	4
+	.word	8
 	.word	-1
 int_const3:
 	.word	2
@@ -215,7 +371,7 @@ int_const2:
 	.word	2
 	.word	4
 	.word	Int_dispTab
-	.word	2
+	.word	4
 	.word	-1
 int_const1:
 	.word	2
@@ -241,28 +397,37 @@ bool_const1:
 	.word	Bool_dispTab
 	.word	1
 class_nameTab:
-	.word	str_const7
+	.word	str_const16
 # child: IO
 # child: Int
 # child: Bool
 # child: String
-# child: List
-
-	.word	str_const8
 # child: Main
 
-	.word	str_const9
+	.word	str_const17
+# child: Book
+# child: BookList
 
-	.word	str_const10
+	.word	str_const18
 
-	.word	str_const11
+	.word	str_const19
 
-	.word	str_const12
+	.word	str_const20
+
+	.word	str_const21
+# child: Article
+
+	.word	str_const22
+
+	.word	str_const23
 # child: Cons
+# child: Nil
 
-	.word	str_const13
+	.word	str_const24
 
-	.word	str_const14
+	.word	str_const25
+
+	.word	str_const26
 
 class_objTab:
 	.word	Object_protObj
@@ -275,10 +440,16 @@ class_objTab:
 	.word	Bool_init
 	.word	String_protObj
 	.word	String_init
-	.word	List_protObj
-	.word	List_init
+	.word	Book_protObj
+	.word	Book_init
+	.word	Article_protObj
+	.word	Article_init
+	.word	BookList_protObj
+	.word	BookList_init
 	.word	Cons_protObj
 	.word	Cons_init
+	.word	Nil_protObj
+	.word	Nil_init
 	.word	Main_protObj
 	.word	Main_init
 Object_dispTab:
@@ -330,39 +501,7 @@ String_dispTab:
 	.word	String.concat
 	# method # 5
 	.word	String.substr
-List_dispTab:
-	# method # 0
-	.word	Object.abort
-	# method # 1
-	.word	Object.type_name
-	# method # 2
-	.word	Object.copy
-	# method # 3
-	.word	List.isNil
-	# method # 4
-	.word	List.head
-	# method # 5
-	.word	List.tail
-	# method # 6
-	.word	List.cons
-Cons_dispTab:
-	# method # 0
-	.word	Object.abort
-	# method # 1
-	.word	Object.type_name
-	# method # 2
-	.word	Object.copy
-	# method # 3
-	.word	Cons.isNil
-	# method # 4
-	.word	Cons.head
-	# method # 5
-	.word	Cons.tail
-	# method # 6
-	.word	List.cons
-	# method # 7
-	.word	Cons.init
-Main_dispTab:
+Book_dispTab:
 	# method # 0
 	.word	Object.abort
 	# method # 1
@@ -378,8 +517,115 @@ Main_dispTab:
 	# method # 6
 	.word	IO.in_int
 	# method # 7
-	.word	Main.print_list
+	.word	Book.initBook
 	# method # 8
+	.word	Book.print
+Article_dispTab:
+	# method # 0
+	.word	Object.abort
+	# method # 1
+	.word	Object.type_name
+	# method # 2
+	.word	Object.copy
+	# method # 3
+	.word	IO.out_string
+	# method # 4
+	.word	IO.out_int
+	# method # 5
+	.word	IO.in_string
+	# method # 6
+	.word	IO.in_int
+	# method # 7
+	.word	Book.initBook
+	# method # 8
+	.word	Article.print
+	# method # 9
+	.word	Article.initArticle
+BookList_dispTab:
+	# method # 0
+	.word	Object.abort
+	# method # 1
+	.word	Object.type_name
+	# method # 2
+	.word	Object.copy
+	# method # 3
+	.word	IO.out_string
+	# method # 4
+	.word	IO.out_int
+	# method # 5
+	.word	IO.in_string
+	# method # 6
+	.word	IO.in_int
+	# method # 7
+	.word	BookList.isNil
+	# method # 8
+	.word	BookList.cons
+	# method # 9
+	.word	BookList.car
+	# method # 10
+	.word	BookList.cdr
+	# method # 11
+	.word	BookList.print_list
+Cons_dispTab:
+	# method # 0
+	.word	Object.abort
+	# method # 1
+	.word	Object.type_name
+	# method # 2
+	.word	Object.copy
+	# method # 3
+	.word	IO.out_string
+	# method # 4
+	.word	IO.out_int
+	# method # 5
+	.word	IO.in_string
+	# method # 6
+	.word	IO.in_int
+	# method # 7
+	.word	Cons.isNil
+	# method # 8
+	.word	BookList.cons
+	# method # 9
+	.word	Cons.car
+	# method # 10
+	.word	Cons.cdr
+	# method # 11
+	.word	Cons.print_list
+	# method # 12
+	.word	Cons.init
+Nil_dispTab:
+	# method # 0
+	.word	Object.abort
+	# method # 1
+	.word	Object.type_name
+	# method # 2
+	.word	Object.copy
+	# method # 3
+	.word	IO.out_string
+	# method # 4
+	.word	IO.out_int
+	# method # 5
+	.word	IO.in_string
+	# method # 6
+	.word	IO.in_int
+	# method # 7
+	.word	Nil.isNil
+	# method # 8
+	.word	BookList.cons
+	# method # 9
+	.word	BookList.car
+	# method # 10
+	.word	BookList.cdr
+	# method # 11
+	.word	Nil.print_list
+Main_dispTab:
+	# method # 0
+	.word	Object.abort
+	# method # 1
+	.word	Object.type_name
+	# method # 2
+	.word	Object.copy
+	# method # 3
 	.word	Main.main
 	.word	-1
 Object_protObj:
@@ -411,20 +657,40 @@ String_protObj:
 	.word	int_const1	# int(0)
 	.word	0	# str(0)
 	.word	-1
-List_protObj:
+Book_protObj:
 	.word	5	# class tag
+	.word	5	# size
+	.word	Book_dispTab
+	.word	str_const27	# str()
+	.word	str_const27	# str()
+	.word	-1
+Article_protObj:
+	.word	6	# class tag
+	.word	6	# size
+	.word	Article_dispTab
+	.word	str_const27	# str()
+	.word	str_const27	# str()
+	.word	str_const27	# str()
+	.word	-1
+BookList_protObj:
+	.word	7	# class tag
 	.word	3	# size
-	.word	List_dispTab
+	.word	BookList_dispTab
 	.word	-1
 Cons_protObj:
-	.word	6	# class tag
+	.word	8	# class tag
 	.word	5	# size
 	.word	Cons_dispTab
-	.word	int_const1	# int(0)
+	.word	0	# void
 	.word	0	# void
 	.word	-1
+Nil_protObj:
+	.word	9	# class tag
+	.word	3	# size
+	.word	Nil_dispTab
+	.word	-1
 Main_protObj:
-	.word	7	# class tag
+	.word	10	# class tag
 	.word	4	# size
 	.word	Main_dispTab
 	.word	0	# void
@@ -584,7 +850,7 @@ String_init:
 	# return
 	jr	$ra	
 
-List_init:
+Book_init:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -598,7 +864,75 @@ List_init:
 	move	$s0 $a0
 
 	# init parent
-	jal	Object_init
+	jal	IO_init
+
+	# init attrib title
+	# Woohoo1
+	la	$a0 str_const27
+	sw	$a0 12($s0)
+	# init attrib author
+	# Woohoo1
+	la	$a0 str_const27
+	sw	$a0 16($s0)
+	# ret = SELF
+	move	$a0 $s0
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# return
+	jr	$ra	
+
+Article_init:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# init parent
+	jal	Book_init
+
+	# init attrib per_title
+	# Woohoo1
+	la	$a0 str_const27
+	sw	$a0 20($s0)
+	# ret = SELF
+	move	$a0 $s0
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# return
+	jr	$ra	
+
+BookList_init:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# init parent
+	jal	IO_init
 
 	# ret = SELF
 	move	$a0 $s0
@@ -626,14 +960,40 @@ Cons_init:
 	move	$s0 $a0
 
 	# init parent
-	jal	List_init
+	jal	BookList_init
 
-	# init attrib car
+	# init attrib xcar
 	# Woohoo1
-	la	$a0 int_const1
-	sw	$a0 12($s0)
-	# init attrib cdr
+	# init attrib xcdr
 	# Woohoo1
+	# ret = SELF
+	move	$a0 $s0
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# return
+	jr	$ra	
+
+Nil_init:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# init parent
+	jal	BookList_init
+
 	# ret = SELF
 	move	$a0 $s0
 
@@ -660,9 +1020,9 @@ Main_init:
 	move	$s0 $a0
 
 	# init parent
-	jal	IO_init
+	jal	Object_init
 
-	# init attrib mylist
+	# init attrib books
 	# Woohoo1
 	# ret = SELF
 	move	$a0 $s0
@@ -676,7 +1036,7 @@ Main_init:
 	# return
 	jr	$ra	
 
-List.isNil:
+Book.initBook:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -690,7 +1050,26 @@ List.isNil:
 	move	$s0 $a0
 
 	# evaluating expresion and put it in acc register
-	la	$a0 bool_const1
+	# Assign. First eval the expr.
+	# Object:
+	# param
+	lw	$a0 16($fp)
+
+	# Now find the lvalue.
+	# It is an attribute.
+	sw	$a0 12($s0)
+	# Assign. First eval the expr.
+	# Object:
+	# param
+	lw	$a0 12($fp)
+
+	# Now find the lvalue.
+	# It is an attribute.
+	sw	$a0 16($s0)
+	# Object:
+	# self
+	move	$a0 $s0
+
 
 	# pop fp, s0, ra
 	lw	$fp 12($sp)
@@ -699,12 +1078,12 @@ List.isNil:
 	addiu	$sp $sp 12
 
 	# Pop arguments
-	addiu	$sp $sp 0
+	addiu	$sp $sp 8
 
 	# return
 	jr	$ra	
 
-List.head:
+Book.print:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -719,6 +1098,22 @@ List.head:
 
 	# evaluating expresion and put it in acc register
 	# Dispatch. First eval and save the params.
+	la	$a0 str_const2
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	# Object:
+	# attribute
+	lw	$a0 12($s0)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const1
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
 	# eval the obj in dispatch.
 	# Object:
 	# self
@@ -735,44 +1130,10 @@ label0:
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 0($t1)
+	lw	$t1 12($t1)
 
-	# jumpto abort
+	# jumpto out_string
 	jalr		$t1
-
-	la	$a0 int_const1
-
-	# pop fp, s0, ra
-	lw	$fp 12($sp)
-	lw	$s0 8($sp)
-	lw	$ra 4($sp)
-	addiu	$sp $sp 12
-
-	# Pop arguments
-	addiu	$sp $sp 0
-
-	# return
-	jr	$ra	
-
-List.tail:
-	# push fp, s0, ra
-	addiu	$sp $sp -12
-	sw	$fp 12($sp)
-	sw	$s0 8($sp)
-	sw	$ra 4($sp)
-
-	# fp now points to the return addr in the stack
-	addiu	$fp $sp 4
-
-	# SELF = a0
-	move	$s0 $a0
-
-	# evaluating expresion and put it in acc register
-	# Dispatch. First eval and save the params.
-	# eval the obj in dispatch.
-	# Object:
-	# self
-	move	$a0 $s0
 
 	# if obj = void: abort
 	bne	$a0 $zero label1
@@ -785,9 +1146,95 @@ label1:
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 0($t1)
+	lw	$t1 12($t1)
 
-	# jumpto abort
+	# jumpto out_string
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label2
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label2:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const2
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	# Object:
+	# attribute
+	lw	$a0 16($s0)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const3
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label3
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label3:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label4
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label4:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label5
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label5:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
 	jalr		$t1
 
 	# Object:
@@ -807,7 +1254,7 @@ label1:
 	# return
 	jr	$ra	
 
-List.cons:
+Article.initArticle:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -824,6 +1271,261 @@ List.cons:
 	# Dispatch. First eval and save the params.
 	# Object:
 	# param
+	lw	$a0 20($fp)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# Object:
+	# param
+	lw	$a0 16($fp)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label6
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label6:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 28($t1)
+
+	# jumpto initBook
+	jalr		$t1
+
+	# Assign. First eval the expr.
+	# Object:
+	# param
+	lw	$a0 12($fp)
+
+	# Now find the lvalue.
+	# It is an attribute.
+	sw	$a0 20($s0)
+	# Object:
+	# self
+	move	$a0 $s0
+
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 12
+
+	# return
+	jr	$ra	
+
+Article.print:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Static dispatch. First step is eval and save params
+	# eval the obj in dispatch
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label7
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label7:
+	# Locate the method in the dispatch table
+	# t1 = Book.dispTab
+	la	$t1 Book_dispTab
+
+	# t1 = dispTab[offset]
+	lw	$t1 32($t1)
+
+	# jumpto print
+	jalr		$t1
+
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const2
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	# Object:
+	# attribute
+	lw	$a0 20($s0)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const4
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label8
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label8:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label9
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label9:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label10
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label10:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 12($t1)
+
+	# jumpto out_string
+	jalr		$t1
+
+	# Object:
+	# self
+	move	$a0 $s0
+
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+BookList.isNil:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label11
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label11:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 0($t1)
+
+	# jumpto abort
+	jalr		$t1
+
+	la	$a0 bool_const1
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+BookList.cons:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Let expr
+	# first eval init
+	la	$a0 Cons_protObj
+	jal	Object.copy
+	jal	Cons_init
+	# push 
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+
+	# Dispatch. First eval and save the params.
+	# Object:
+	# param
 	lw	$a0 12($fp)
 
 	sw	$a0 0($sp)
@@ -835,24 +1537,28 @@ List.cons:
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	la	$a0 Cons_protObj
-	jal	Object.copy
-	jal	Cons_init
+	# Object:
+	# let variable
+	lw	$a0 12($sp)
+
 	# if obj = void: abort
-	bne	$a0 $zero label2
+	bne	$a0 $zero label12
 	la	$a0 str_const0
 	li	$t1 1
 	jal	_dispatch_abort
-label2:
+label12:
 	# locate method in dispatch table
 	# t1 = self.dispTab
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 28($t1)
+	lw	$t1 48($t1)
 
 	# jumpto init
 	jalr		$t1
+
+	# pop
+	addiu	$sp $sp 4
 
 
 	# pop fp, s0, ra
@@ -863,6 +1569,159 @@ label2:
 
 	# Pop arguments
 	addiu	$sp $sp 4
+
+	# return
+	jr	$ra	
+
+BookList.car:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label13
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label13:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 0($t1)
+
+	# jumpto abort
+	jalr		$t1
+
+	la	$a0 Book_protObj
+	jal	Object.copy
+	jal	Book_init
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+BookList.cdr:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label14
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label14:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 0($t1)
+
+	# jumpto abort
+	jalr		$t1
+
+	la	$a0 BookList_protObj
+	jal	Object.copy
+	jal	BookList_init
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+BookList.print_list:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# self
+	move	$a0 $s0
+
+	# if obj = void: abort
+	bne	$a0 $zero label15
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label15:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 0($t1)
+
+	# jumpto abort
+	jalr		$t1
+
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
 
 	# return
 	jr	$ra	
@@ -882,68 +1741,6 @@ Cons.isNil:
 
 	# evaluating expresion and put it in acc register
 	la	$a0 bool_const0
-
-	# pop fp, s0, ra
-	lw	$fp 12($sp)
-	lw	$s0 8($sp)
-	lw	$ra 4($sp)
-	addiu	$sp $sp 12
-
-	# Pop arguments
-	addiu	$sp $sp 0
-
-	# return
-	jr	$ra	
-
-Cons.head:
-	# push fp, s0, ra
-	addiu	$sp $sp -12
-	sw	$fp 12($sp)
-	sw	$s0 8($sp)
-	sw	$ra 4($sp)
-
-	# fp now points to the return addr in the stack
-	addiu	$fp $sp 4
-
-	# SELF = a0
-	move	$s0 $a0
-
-	# evaluating expresion and put it in acc register
-	# Object:
-	# attribute
-	lw	$a0 12($s0)
-
-
-	# pop fp, s0, ra
-	lw	$fp 12($sp)
-	lw	$s0 8($sp)
-	lw	$ra 4($sp)
-	addiu	$sp $sp 12
-
-	# Pop arguments
-	addiu	$sp $sp 0
-
-	# return
-	jr	$ra	
-
-Cons.tail:
-	# push fp, s0, ra
-	addiu	$sp $sp -12
-	sw	$fp 12($sp)
-	sw	$s0 8($sp)
-	sw	$ra 4($sp)
-
-	# fp now points to the return addr in the stack
-	addiu	$fp $sp 4
-
-	# SELF = a0
-	move	$s0 $a0
-
-	# evaluating expresion and put it in acc register
-	# Object:
-	# attribute
-	lw	$a0 16($s0)
-
 
 	# pop fp, s0, ra
 	lw	$fp 12($sp)
@@ -1004,7 +1801,7 @@ Cons.init:
 	# return
 	jr	$ra	
 
-Main.print_list:
+Cons.car:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -1018,184 +1815,10 @@ Main.print_list:
 	move	$s0 $a0
 
 	# evaluating expresion and put it in acc register
-	# If statement. First eval condition.
-	# Dispatch. First eval and save the params.
-	# eval the obj in dispatch.
 	# Object:
-	# param
-	lw	$a0 12($fp)
+	# attribute
+	lw	$a0 12($s0)
 
-	# if obj = void: abort
-	bne	$a0 $zero label3
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label3:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 12($t1)
-
-	# jumpto isNil
-	jalr		$t1
-
-	# extract bool content from acc to t1
-	lw	$t1 12($a0)
-
-	# if t1 == 0 goto false
-	beq	$t1 $zero label4
-
-	# Dispatch. First eval and save the params.
-	la	$a0 str_const1
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Object:
-	# self
-	move	$a0 $s0
-
-	# if obj = void: abort
-	bne	$a0 $zero label6
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label6:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 12($t1)
-
-	# jumpto out_string
-	jalr		$t1
-
-	# jumpt finish
-	b	label5
-
-# False:
-label4:
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# eval the obj in dispatch.
-	# Object:
-	# param
-	lw	$a0 12($fp)
-
-	# if obj = void: abort
-	bne	$a0 $zero label7
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label7:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 16($t1)
-
-	# jumpto head
-	jalr		$t1
-
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Object:
-	# self
-	move	$a0 $s0
-
-	# if obj = void: abort
-	bne	$a0 $zero label8
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label8:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 16($t1)
-
-	# jumpto out_int
-	jalr		$t1
-
-	# Dispatch. First eval and save the params.
-	la	$a0 str_const2
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Object:
-	# self
-	move	$a0 $s0
-
-	# if obj = void: abort
-	bne	$a0 $zero label9
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label9:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 12($t1)
-
-	# jumpto out_string
-	jalr		$t1
-
-	# Dispatch. First eval and save the params.
-	# Dispatch. First eval and save the params.
-	# eval the obj in dispatch.
-	# Object:
-	# param
-	lw	$a0 12($fp)
-
-	# if obj = void: abort
-	bne	$a0 $zero label10
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label10:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 20($t1)
-
-	# jumpto tail
-	jalr		$t1
-
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Object:
-	# self
-	move	$a0 $s0
-
-	# if obj = void: abort
-	bne	$a0 $zero label11
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label11:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 28($t1)
-
-	# jumpto print_list
-	jalr		$t1
-
-# Finish:
-label5:
 
 	# pop fp, s0, ra
 	lw	$fp 12($sp)
@@ -1204,12 +1827,12 @@ label5:
 	addiu	$sp $sp 12
 
 	# Pop arguments
-	addiu	$sp $sp 4
+	addiu	$sp $sp 0
 
 	# return
 	jr	$ra	
 
-Main.main:
+Cons.cdr:
 	# push fp, s0, ra
 	addiu	$sp $sp -12
 	sw	$fp 12($sp)
@@ -1223,98 +1846,44 @@ Main.main:
 	move	$s0 $a0
 
 	# evaluating expresion and put it in acc register
-	# Assign. First eval the expr.
+	# Object:
+	# attribute
+	lw	$a0 16($s0)
+
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+Cons.print_list:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# case expr
+	# First eval e0
 	# Dispatch. First eval and save the params.
-	la	$a0 int_const5
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
 	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
-	la	$a0 int_const4
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
-	la	$a0 int_const3
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
-	la	$a0 int_const2
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	# Dispatch. First eval and save the params.
-	la	$a0 int_const0
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
-	# eval the obj in dispatch.
-	la	$a0 List_protObj
-	jal	Object.copy
-	jal	List_init
-	# if obj = void: abort
-	bne	$a0 $zero label12
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label12:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 24($t1)
-
-	# jumpto cons
-	jalr		$t1
-
-	# if obj = void: abort
-	bne	$a0 $zero label13
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label13:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 24($t1)
-
-	# jumpto cons
-	jalr		$t1
-
-	# if obj = void: abort
-	bne	$a0 $zero label14
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label14:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 24($t1)
-
-	# jumpto cons
-	jalr		$t1
-
-	# if obj = void: abort
-	bne	$a0 $zero label15
-	la	$a0 str_const0
-	li	$t1 1
-	jal	_dispatch_abort
-label15:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
-
-	# t1 = dispTab[offset]
-	lw	$t1 24($t1)
-
-	# jumpto cons
-	jalr		$t1
+	# Object:
+	# attribute
+	lw	$a0 12($s0)
 
 	# if obj = void: abort
 	bne	$a0 $zero label16
@@ -1327,63 +1896,42 @@ label16:
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 24($t1)
+	lw	$t1 32($t1)
 
-	# jumpto cons
+	# jumpto print
 	jalr		$t1
 
-	# Now find the lvalue.
-	# It is an attribute.
-	sw	$a0 12($s0)
-	# While loop
-	# start:
-label17:
-	# ACC = pred
-	# the 'not' operator
-	# First eval the bool
-	# Dispatch. First eval and save the params.
-	# eval the obj in dispatch.
-	# Object:
-	# attribute
-	lw	$a0 12($s0)
-
-	# if obj = void: abort
-	bne	$a0 $zero label19
+	# If e0 = void, abort
+	bne	$a0 $zero label17
 	la	$a0 str_const0
 	li	$t1 1
-	jal	_dispatch_abort
-label19:
-	# locate method in dispatch table
-	# t1 = self.dispTab
-	lw	$t1 8($a0)
+	jal	_case_abort2
+label17:
+	# T1 = type(acc)
+	lw	$t1 0($a0)
+	# tag = 5 : goto case 0
+	li	$t2 5
+	beq	$t1 $t2 label18
 
-	# t1 = dispTab[offset]
-	lw	$t1 12($t1)
+	# tag = 6 : goto case 1
+	li	$t2 6
+	beq	$t1 $t2 label19
 
-	# jumpto isNil
-	jalr		$t1
+	# ------------
+	# tag = 6 : goto case 0
+	li	$t2 6
+	beq	$t1 $t2 label18
 
-	# Extract the int inside the bool
-	lw	$t1 12($a0)
-	# Pretend ACC = false, then we need to construct true
-	la	$a0 bool_const1
-	# If ACC = false, jumpto finish
-	beq	$t1 $zero label20
-	# Load false
-	la	$a0 bool_const0
-	# finish:
-label20:
-	# extract int inside bool
-	lw	$t1 12($a0)
-
-	# if pred == false jumpto finish
-	beq	$t1 $zero label18
-
+	# ------------
+	# No Match
+	jal	_case_abort
+	b	label20
+# eval expr 0
+label18:
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
 	# Dispatch. First eval and save the params.
-	# Object:
-	# attribute
-	lw	$a0 12($s0)
-
+	la	$a0 str_const5
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	# eval the obj in dispatch.
@@ -1402,17 +1950,26 @@ label21:
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 28($t1)
+	lw	$t1 12($t1)
 
-	# jumpto print_list
+	# jumpto out_string
 	jalr		$t1
 
-	# Assign. First eval the expr.
+	addiu	$sp $sp 4
+	# Jumpto finish
+	b	label20
+# eval expr 1
+label19:
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
 	# Dispatch. First eval and save the params.
+	la	$a0 str_const6
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
 	# eval the obj in dispatch.
 	# Object:
-	# attribute
-	lw	$a0 12($s0)
+	# self
+	move	$a0 $s0
 
 	# if obj = void: abort
 	bne	$a0 $zero label22
@@ -1425,20 +1982,274 @@ label22:
 	lw	$t1 8($a0)
 
 	# t1 = dispTab[offset]
-	lw	$t1 20($t1)
+	lw	$t1 12($t1)
 
-	# jumpto tail
+	# jumpto out_string
+	jalr		$t1
+
+	addiu	$sp $sp 4
+	# Jumpto finish
+	b	label20
+#finish:
+label20:
+
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# attribute
+	lw	$a0 16($s0)
+
+	# if obj = void: abort
+	bne	$a0 $zero label23
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label23:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 44($t1)
+
+	# jumpto print_list
+	jalr		$t1
+
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+Nil.isNil:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	la	$a0 bool_const1
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+Nil.print_list:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	la	$a0 bool_const1
+
+	# pop fp, s0, ra
+	lw	$fp 12($sp)
+	lw	$s0 8($sp)
+	lw	$ra 4($sp)
+	addiu	$sp $sp 12
+
+	# Pop arguments
+	addiu	$sp $sp 0
+
+	# return
+	jr	$ra	
+
+Main.main:
+	# push fp, s0, ra
+	addiu	$sp $sp -12
+	sw	$fp 12($sp)
+	sw	$s0 8($sp)
+	sw	$ra 4($sp)
+
+	# fp now points to the return addr in the stack
+	addiu	$fp $sp 4
+
+	# SELF = a0
+	move	$s0 $a0
+
+	# evaluating expresion and put it in acc register
+	# Let expr
+	# first eval init
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const7
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	la	$a0 str_const8
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	la	$a0 Book_protObj
+	jal	Object.copy
+	jal	Book_init
+	# if obj = void: abort
+	bne	$a0 $zero label24
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label24:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 28($t1)
+
+	# jumpto initBook
+	jalr		$t1
+
+	# push 
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+
+	# Let expr
+	# first eval init
+	# Dispatch. First eval and save the params.
+	la	$a0 str_const9
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	la	$a0 str_const10
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	la	$a0 str_const11
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	la	$a0 Article_protObj
+	jal	Object.copy
+	jal	Article_init
+	# if obj = void: abort
+	bne	$a0 $zero label25
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label25:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 36($t1)
+
+	# jumpto initArticle
+	jalr		$t1
+
+	# push 
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+
+	# Assign. First eval the expr.
+	# Dispatch. First eval and save the params.
+	# Object:
+	# let variable
+	lw	$a0 4($sp)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	# Dispatch. First eval and save the params.
+	# Object:
+	# let variable
+	lw	$a0 12($sp)
+
+	sw	$a0 0($sp)
+	addiu	$sp $sp -4
+	# eval the obj in dispatch.
+	la	$a0 Nil_protObj
+	jal	Object.copy
+	jal	Nil_init
+	# if obj = void: abort
+	bne	$a0 $zero label26
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label26:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 32($t1)
+
+	# jumpto cons
+	jalr		$t1
+
+	# if obj = void: abort
+	bne	$a0 $zero label27
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label27:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 32($t1)
+
+	# jumpto cons
 	jalr		$t1
 
 	# Now find the lvalue.
 	# It is an attribute.
 	sw	$a0 12($s0)
-	# Jumpto start
-	b	label17
-	# Finish:
-label18:
-	# ACC = void
-	move	$a0 $zero
+	# Dispatch. First eval and save the params.
+	# eval the obj in dispatch.
+	# Object:
+	# attribute
+	lw	$a0 12($s0)
+
+	# if obj = void: abort
+	bne	$a0 $zero label28
+	la	$a0 str_const0
+	li	$t1 1
+	jal	_dispatch_abort
+label28:
+	# locate method in dispatch table
+	# t1 = self.dispTab
+	lw	$t1 8($a0)
+
+	# t1 = dispTab[offset]
+	lw	$t1 44($t1)
+
+	# jumpto print_list
+	jalr		$t1
+
+	# pop
+	addiu	$sp $sp 4
+
+	# pop
+	addiu	$sp $sp 4
+
 
 	# pop fp, s0, ra
 	lw	$fp 12($sp)

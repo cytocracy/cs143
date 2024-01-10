@@ -1,141 +1,132 @@
-(*
- *  This file shows how to implement a list data type for lists of integers.
- *  It makes use of INHERITANCE and DYNAMIC DISPATCH.
- *
- *  The List class has 4 operations defined on List objects. If 'l' is
- *  a list, then the methods dispatched on 'l' have the following effects:
- *
- *    isNil() : Bool		Returns true if 'l' is empty, false otherwise.
- *    head()  : Int		Returns the integer at the head of 'l'.
- *				If 'l' is empty, execution aborts.
- *    tail()  : List		Returns the remainder of the 'l',
- *				i.e. without the first element.
- *    cons(i : Int) : List	Return a new list containing i as the
- *				first element, followed by the
- *				elements in 'l'.
- *
- *  There are 2 kinds of lists, the empty list and a non-empty
- *  list. We can think of the non-empty list as a specialization of
- *  the empty list.
- *  The class List defines the operations on empty list. The class
- *  Cons inherits from List and redefines things to handle non-empty
- *  lists.
- *)
+-- example of static and dynamic type differing for a dispatch
 
+Class Book inherits IO {
+    title : String;
+    author : String;
 
-class List {
-   -- Define operations on empty lists.
+    initBook(title_p : String, author_p : String) : Book {
+        {
+            title <- title_p;
+            author <- author_p;
+            self;
+        }
+    };
 
-   isNil() : Bool { true };
+    print() : Book {
+        {
+            out_string("title:      ").out_string(title).out_string("\n");
+            out_string("author:     ").out_string(author).out_string("\n");
+            self;
+        }
+    };
+};
 
-   -- Since abort() has return type Object and head() has return type
-   -- Int, we need to have an Int as the result of the method body,
-   -- even though abort() never returns.
+Class Article inherits Book {
+    per_title : String;
 
-   head()  : Int { { abort(); 0; } };
+    initArticle(title_p : String, author_p : String,
+		per_title_p : String) : Article {
+        {
+            initBook(title_p, author_p);
+            per_title <- per_title_p;
+            self;
+        }
+    };
 
-   -- As for head(), the self is just to make sure the return type of
-   -- tail() is correct.
+    print() : Book {
+        {
+	    self@Book.print();
+            out_string("periodical:  ").out_string(per_title).out_string("\n");
+            self;
+        }
+    };
+};
 
-   tail()  : List { { abort(); self; } };
+Class BookList inherits IO { 
+    (* Since abort "returns" type Object, we have to add
+       an expression of type Bool here to satisfy the typechecker.
+       This code is unreachable, since abort() halts the program.
+    *)
+    isNil() : Bool { { abort(); true; } };
+    
+    cons(hd : Book) : Cons {
+        (let new_cell : Cons <- new Cons in
+            new_cell.init(hd,self)
+        )
+    };
 
-   -- When we cons and element onto the empty list we get a non-empty
-   -- list. The (new Cons) expression creates a new list cell of class
-   -- Cons, which is initialized by a dispatch to init().
-   -- The result of init() is an element of class Cons, but it
-   -- conforms to the return type List, because Cons is a subclass of
-   -- List.
+    (* Since abort "returns" type Object, we have to add
+       an expression of type Book here to satisfy the typechecker.
+       This code is unreachable, since abort() halts the program.
+    *)
+    car() : Book { { abort(); new Book; } };
+    
+    (* Since abort "returns" type Object, we have to add
+       an expression of type BookList here to satisfy the typechecker.
+       This code is unreachable, since abort() halts the program.
+    *)
+    cdr() : BookList { { abort(); new BookList; } };
+    
+    print_list() : Object { abort() };
+};
 
-   cons(i : Int) : List {
-      (new Cons).init(i, self)
-   };
+Class Cons inherits BookList {
+    xcar : Book;  -- We keep the car and cdr in attributes.
+    xcdr : BookList; -- Because methods and features must have different names,
+    -- we use xcar and xcdr for the attributes and reserve
+    -- car and cdr for the features.
+    
+    isNil() : Bool { false };
+    
+    init(hd : Book, tl : BookList) : Cons {
+        {
+            xcar <- hd;
+            xcdr <- tl;
+            self;
+        }
+    };
 
+    car() : Book { xcar };
+
+    cdr() : BookList { xcdr };
+    
+    print_list() : Object {
+        {
+            case xcar.print() of
+                dummy : Book => out_string("- dynamic type was Book -\n");
+                dummy : Article => out_string("- dynamic type was Article -\n");
+            esac;
+            xcdr.print_list();
+        }
+    };
+};
+
+Class Nil inherits BookList {
+    isNil() : Bool { true };
+
+    print_list() : Object { true };
 };
 
 
-(*
- *  Cons inherits all operations from List. We can reuse only the cons
- *  method though, because adding an element to the front of an emtpy
- *  list is the same as adding it to the front of a non empty
- *  list. All other methods have to be redefined, since the behaviour
- *  for them is different from the empty list.
- *
- *  Cons needs two attributes to hold the integer of this list
- *  cell and to hold the rest of the list.
- *
- *  The init() method is used by the cons() method to initialize the
- *  cell.
- *)
+Class Main {
 
-class Cons inherits List {
+    books : BookList;
 
-   car : Int;	-- The element in this list cell
-
-   cdr : List;	-- The rest of the list
-
-   isNil() : Bool { false };
-
-   head()  : Int { car };
-
-   tail()  : List { cdr };
-
-   init(i : Int, rest : List) : List {
-      {
-	 car <- i;
-	 cdr <- rest;
-	 self;
-      }
-   };
-
+    main() : Object {
+        (let a_book : Book <-
+            (new Book).initBook("Compilers, Principles, Techniques, and Tools",
+                                "Aho, Sethi, and Ullman")
+        in
+            (let an_article : Article <-
+                (new Article).initArticle("The Top 100 CD_ROMs",
+                                          "Ulanoff",
+                                          "PC Magazine")
+            in
+                {
+                    books <- (new Nil).cons(a_book).cons(an_article);
+                    books.print_list();
+                }
+            )  -- end let an_article
+        )  -- end let a_book
+    };
 };
-
-
-
-(*
- *  The Main class shows how to use the List class. It creates a small
- *  list and then repeatedly prints out its elements and takes off the
- *  first element of the list.
- *)
-
-class Main inherits IO {
-
-   mylist : List;
-
-   -- Print all elements of the list. Calls itself recursively with
-   -- the tail of the list, until the end of the list is reached.
-
-   print_list(l : List) : Object {
-      if l.isNil() then out_string("\n")
-                   else {
-			   out_int(l.head());
-			   out_string(" ");
-			   print_list(l.tail());
-		        }
-      fi
-   };
-
-   -- Note how the dynamic dispatch mechanism is responsible to end
-   -- the while loop. As long as mylist is bound to an object of 
-   -- dynamic type Cons, the dispatch to isNil calls the isNil method of
-   -- the Cons class, which returns false. However when we reach the
-   -- end of the list, mylist gets bound to the object that was
-   -- created by the (new List) expression. This object is of dynamic type
-   -- List, and thus the method isNil in the List class is called and
-   -- returns true.
-
-   main() : Object {
-      {
-	 mylist <- new List.cons(1).cons(2).cons(3).cons(4).cons(5);
-	 while (not mylist.isNil()) loop
-	    {
-	       print_list(mylist);
-	       mylist <- mylist.tail();
-	    }
-	 pool;
-      }
-   };
-
-};
-
-
-
